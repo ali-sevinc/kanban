@@ -16,7 +16,7 @@ export default function SideMenuItem({ name }: { name: string }) {
     >
       <Link
         href={`/${name.toLocaleLowerCase()}`}
-        className="w-full inline-block"
+        className="w-full inline-block capitalize"
       >
         {name}
       </Link>

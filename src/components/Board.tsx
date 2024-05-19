@@ -1,15 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
+import { ProgressType, TaskType } from "@/lib/types";
+
 import BoardItems from "./BoardItems";
 
-type ProgressType = "todo" | "doing" | "done";
-type TaskType = {
-  id: string;
-  type: string;
-  progress: ProgressType;
-  body: string;
-};
 export default function Board({ tasks }: { tasks: TaskType[] }) {
   const [taskItems, setTaskItems] = useState(tasks);
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
@@ -30,14 +26,13 @@ export default function Board({ tasks }: { tasks: TaskType[] }) {
   }
 
   function handleStartDrag(task: TaskType) {
-    console.log(task.id, "start dragged");
+    // console.log(task.id, "start dragged");
     setDraggedItem(task);
   }
 
   function handleDropped(progress: ProgressType) {
     if (!draggedItem) return;
     if (draggedItem.progress === progress) return;
-    console.log("drop over");
     handleChangeTasksProgress(progress, draggedItem.id);
   }
 
