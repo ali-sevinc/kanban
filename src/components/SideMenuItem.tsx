@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function SideMenuItem({ name }: { name: string }) {
+type PropssType = { title: string; href: string };
+
+export default function SideMenuItem({ title, href }: PropssType) {
   const pathName = usePathname();
 
-  const isSelected = name.toLowerCase() === pathName.split("/", -1).join("");
+  const isSelected = href === pathName;
 
   return (
     <li
@@ -14,11 +16,8 @@ export default function SideMenuItem({ name }: { name: string }) {
         isSelected ? "bg-purple-500 rounded-r-full translate-x-2" : ""
       } px-4 py-1 text-lg hover:translate-x-2 duration-200`}
     >
-      <Link
-        href={`/${name.toLocaleLowerCase()}`}
-        className="w-full inline-block capitalize"
-      >
-        {name}
+      <Link href={href} className="w-full inline-block capitalize">
+        {title}
       </Link>
     </li>
   );

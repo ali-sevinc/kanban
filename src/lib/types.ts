@@ -6,3 +6,8 @@ export type TaskType = {
   body: string;
   title: string;
 };
+export type BoardType = {
+  boardId: string;
+  title: string;
+  slug: string;
+};

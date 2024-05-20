@@ -1,22 +1,15 @@
 import Link from "next/link";
 import { BsKanban } from "react-icons/bs";
 import SideMenuItem from "./SideMenuItem";
-import { fetchData } from "@/app/[board]/page";
 
-// const DUMMY_BOARDS = [
-//   { id: "1", name: "Tasks" },
-//   { id: "2", name: "Financials" },
-//   { id: "3", name: "Roadmap" },
-// ];
+import { BoardType } from "@/lib/types";
+import TextButton from "./TextButton";
+import { fetchBoards } from "@/lib/fncs";
+import NewBoard from "./NewBoard";
 
-export default function Sidebar() {
-  const data = fetchData();
-  const boards = data.reduce((sum, item) => {
-    if (!sum.includes(item.type)) {
-      sum.push(item.type);
-    }
-    return sum;
-  }, [] as string[]);
+export default async function Sidebar() {
+  // const { boards } = fetchData() as { boards: BoardType[] };
+  const boards = (await fetchBoards()) as BoardType[];
 
   return (
     <aside className="grid-row-full border-r inline-grid text-zinc-50">
@@ -30,11 +23,20 @@ export default function Sidebar() {
         <p className="text-center text-zinc-300 py-5">
           Boards ({boards.length})
         </p>
-        <menu className="pr-12 flex flex-col gap-2">
-          {boards.map((item) => (
-            <SideMenuItem key={item} name={item} />
-          ))}
-        </menu>
+        <nav className="pr-12 flex flex-col gap-2">
+          <menu>
+            {boards.map((item) => (
+              <SideMenuItem
+                key={item.boardId}
+                title={item.title}
+                href={item.slug}
+              />
+            ))}
+          </menu>
+        </nav>
+        <div className="p-4">
+          <NewBoard boards={boards} />
+        </div>
       </div>
     </aside>
   );
