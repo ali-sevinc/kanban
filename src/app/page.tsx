@@ -1,10 +1,12 @@
 import Board from "@/components/Board";
-import { fetchTasks } from "@/lib/fncs";
-import { TaskType } from "@/lib/types";
+import { fetchBoards } from "@/lib/fncs";
+import { BoardType } from "@/lib/types";
 
 export default async function Home() {
-  // const { tasks } = fetchData() as { tasks: TaskType[] };
-  const tasks = (await fetchTasks()) as TaskType[];
+  const fetchedTasks = (await fetchBoards()) as BoardType[];
+  const tasks = fetchedTasks
+    .filter((board) => board.tasks)
+    .flatMap((tasks) => tasks.tasks);
 
   return <Board tasks={tasks} />;
 }

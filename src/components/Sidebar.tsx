@@ -3,12 +3,11 @@ import { BsKanban } from "react-icons/bs";
 import SideMenuItem from "./SideMenuItem";
 
 import { BoardType } from "@/lib/types";
-import TextButton from "./TextButton";
+
 import { fetchBoards } from "@/lib/fncs";
 import NewBoard from "./NewBoard";
 
 export default async function Sidebar() {
-  // const { boards } = fetchData() as { boards: BoardType[] };
   const boards = (await fetchBoards()) as BoardType[];
 
   return (
@@ -30,6 +29,7 @@ export default async function Sidebar() {
                 key={item.boardId}
                 title={item.title}
                 href={item.slug}
+                id={item.id}
               />
             ))}
           </menu>

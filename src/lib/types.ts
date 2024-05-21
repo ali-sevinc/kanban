@@ -10,4 +10,6 @@ export type BoardType = {
   boardId: string;
   title: string;
   slug: string;
+  id: string;
+  tasks: TaskType[];
 };
