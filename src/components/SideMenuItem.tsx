@@ -47,8 +47,11 @@ export default function SideMenuItem({ title, href, id }: PropssType) {
           <div className="text-zinc-50">
             <h2 className="text-2xl pb-4">Are you sure?</h2>
             <p className="text-lg">
-              Do you really want to delete {title.toUpperCase()} board and all
-              the tasks?
+              Do you really want to delete{" "}
+              <b className="text-red-300">
+                &rdquo;{title.toUpperCase()}&rdquo;
+              </b>{" "}
+              board and all the tasks?
             </p>
             <p className="text-center text-red-300">
               This action cannot be undone!!

@@ -87,7 +87,7 @@
       "tasks": [
         {
           "type": "tasks",
-          "progress": "todo",
+          "progress": "done",
           "id": "1",
           "body": "important to do",
           "title": "Task 1"
@@ -115,7 +115,7 @@
         },
         {
           "type": "tasks",
-          "progress": "done",
+          "progress": "doing",
           "id": "3",
           "body": "important to done",
           "title": "Task 5"
@@ -130,14 +130,14 @@
       "tasks": [
         {
           "type": "financials",
-          "progress": "todo",
+          "progress": "doing",
           "id": "4",
           "body": "financial to-do",
           "title": "Financial 1"
         },
         {
           "type": "financials",
-          "progress": "doing",
+          "progress": "todo",
           "id": "5",
           "body": "financial doing",
           "title": "Financial 2"
@@ -159,21 +159,21 @@
       "tasks": [
         {
           "type": "roadmap",
-          "progress": "todo",
+          "progress": "doing",
           "id": "7",
           "body": "roadmap to-do",
           "title": "Rouadmap 1"
         },
         {
           "type": "roadmap",
-          "progress": "doing",
+          "progress": "done",
           "id": "8",
           "body": "roadmap doing",
           "title": "Rouadmap 1"
         },
         {
           "type": "roadmap",
-          "progress": "done",
+          "progress": "todo",
           "id": "9",
           "body": "roadmap done",
           "title": "Rouadmap 1"

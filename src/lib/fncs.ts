@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { BoardType } from "./types";
 
 // export async function fetchTasks() {
 //   const res = await fetch(`http://localhost:8000/tasks`, { cache: "no-cache" });
@@ -77,4 +78,37 @@ export async function deleteBoard(id: string) {
     revalidatePath("", "page");
     redirect("/");
   }
+}
+
+export async function updateTaskProgress(
+  boardId: string,
+  taskId: string,
+  newProgress: "todo" | "doing" | "done"
+) {
+  const boardsRes = await fetch(`http://localhost:8000/boards/${boardId}`);
+  const board = (await boardsRes.json()) as BoardType;
+
+  // console.log("----Boards----", board);
+  if (!board) {
+    throw new Error("Not found");
+  }
+
+  const index = board.tasks.findIndex((task) => task.id === taskId);
+
+  if (index === -1) throw new Error("Tasks not found!");
+
+  board.tasks[index].progress = newProgress;
+
+  const res = await fetch(`http://localhost:8000/boards/${boardId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(board),
+  });
+
+  if (!res.ok) throw new Error("Progress cannot updated.");
+
+  const data = await res.json();
+  return data;
 }

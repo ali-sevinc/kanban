@@ -14,5 +14,5 @@ export default async function BoardPage({
 
   if (!tasks?.length || !tasks) tasks = [] as TaskType[];
 
-  return <Board tasks={tasks} />;
+  return <Board tasks={tasks} boardId={fetchedBoard[0].id} />;
 }
