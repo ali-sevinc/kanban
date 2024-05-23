@@ -2,6 +2,8 @@ import Board from "@/components/Board";
 import { fetchBoards } from "@/lib/fncs";
 import { BoardType, TaskType } from "@/lib/types";
 
+export const revalidate = 1;
+
 export default async function BoardPage({
   params,
 }: {

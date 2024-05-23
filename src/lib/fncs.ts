@@ -1,7 +1,7 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { BoardType } from "./types";
+import { BoardType, TaskType } from "./types";
 
 // export async function fetchTasks() {
 //   const res = await fetch(`http://localhost:8000/tasks`, { cache: "no-cache" });
@@ -21,12 +21,16 @@ export async function fetchBoards(slug?: string) {
   let data;
   if (!slug) {
     const res = await fetch(`http://localhost:8000/boards`, {
-      cache: "no-cache",
+      next: {
+        tags: ["board"],
+      },
     });
     data = await res.json();
   } else {
     const res = await fetch(`http://localhost:8000/boards/?slug=${slug}`, {
-      cache: "no-cache",
+      next: {
+        tags: ["board"],
+      },
     });
     data = await res.json();
   }
@@ -58,7 +62,7 @@ export async function createBoard({
     });
     if (!res.ok) throw new Error("Creating board failed.");
     resData = await res.json();
-    revalidatePath("", "page");
+    revalidateTag("board");
   } catch (error) {
     throw error;
   }
@@ -75,9 +79,28 @@ export async function deleteBoard(id: string) {
   const data = await res.json();
 
   if (res.ok) {
-    revalidatePath("", "page");
+    revalidatePath("/");
     redirect("/");
   }
+}
+
+export async function addTodo(
+  board: BoardType,
+  task: { progress: string; body: string; title: string }
+) {
+  if (!board) throw new Error("Board not found.");
+  const data = { ...board, tasks: [...board.tasks, task] };
+  const res = await fetch(`http://localhost:8000/boards/${board.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to create new todo.");
+  const resData = await res.json();
+  revalidateTag("board");
+  return resData;
 }
 
 export async function updateTaskProgress(

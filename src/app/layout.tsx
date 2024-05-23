@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
 import "./globals.css";
+export const revalidate = 1;
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -26,7 +27,7 @@ export default function RootLayout({
       <body
         className={`grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800 ${kanit.className}`}
       >
-        <Header boards={[]} />
+        <Header />
         <Sidebar />
         <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
           {children}

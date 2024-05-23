@@ -1,4 +1,3 @@
-import Board from "@/components/Board";
 import Home from "@/components/Home";
 // import { fetchBoards } from "@/lib/fncs";
 // import { BoardType } from "@/lib/types";

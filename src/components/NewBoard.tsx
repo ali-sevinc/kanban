@@ -7,6 +7,7 @@ import { BoardType } from "@/lib/types";
 import slugify from "slugify";
 import { createBoard } from "@/lib/fncs";
 import Button from "./Button";
+import InputGroup from "./InputGroup";
 
 export default function NewBoard({ boards }: { boards: BoardType[] }) {
   const [showForm, setShowForm] = useState(false);
@@ -54,18 +55,12 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
             <h2 className="text-2xl text-center font-semibold pb-4">
               Create New Board
             </h2>
-            <div className="flex flex-col">
-              <label htmlFor="board-name" className="text-lg">
-                Board Name
-              </label>
-              <input
-                onChange={(e) => setTitle(e.target.value)}
-                type="text"
-                id="board-name"
-                required
-                className="text-zinc-900 text-xl px-2 w-72 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded"
-              />
-            </div>
+
+            <InputGroup
+              id="board-name"
+              label="Board Name"
+              onChange={(e) => setTitle(e)}
+            />
             {error !== "" && (
               <p className="text-sm text-red-500 pt-1 text-center">{error}</p>
             )}
