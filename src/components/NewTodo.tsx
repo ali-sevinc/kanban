@@ -36,6 +36,8 @@ export default function NewTodo({ board, onClose }: PropsType) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-zinc-50">
+      <h2 className="text-xl text-center pt-2">New Todo</h2>
+
       <InputGroup id="title" label="Title" onChange={(e) => setTitle(e)} />
 
       <InputGroup id="todo" label="Todo" onChange={(e) => setBody(e)} />

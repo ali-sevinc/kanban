@@ -8,32 +8,42 @@ import { useEffect, useState } from "react";
 import { fetchBoards } from "@/lib/fncs";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Header() {
   const pathName = usePathname();
   const [showNewTodo, setShowNewTodo] = useState(false);
-  const [boards, setBoards] = useState<BoardType[]>([]);
+  // const [boards, setBoards] = useState<BoardType[]>([]);
 
-  useEffect(function () {
-    async function handleFetchBoards() {
-      const fetchedBoards = await fetchBoards();
+  const {
+    data: boards,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["boards"],
+    queryFn: () => fetchBoards(),
+  });
 
-      setBoards(fetchedBoards);
-    }
-    handleFetchBoards();
-  }, []);
+  // useEffect(function () {
+  //   async function handleFetchBoards() {
+  //     const fetchedBoards = await fetchBoards();
 
-  const board = boards.find((board) => board.slug === pathName);
+  //     setBoards(fetchedBoards);
+  //   }
+  //   handleFetchBoards();
+  // }, []);
+
+  const board = boards?.find((board) => board.slug === pathName);
 
   let displayName = "";
   if (pathName === "/") displayName = "home";
   if (pathName !== "/")
-    displayName = boards.find((item) => item.slug === pathName)?.title || "";
+    displayName = boards?.find((item) => item.slug === pathName)?.title || "";
 
   return (
     <>
       <header className="h-24 text-zinc-50 flex items-center justify-between px-12 border-b">
-        <h2 className="uppercase">{displayName}</h2>
+        <h2 className="uppercase">{isLoading ? "Loading..." : displayName}</h2>
         {pathName !== "/" && (
           <TextButton onClick={() => setShowNewTodo(true)}>
             +New Todo

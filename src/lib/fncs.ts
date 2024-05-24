@@ -1,24 +1,10 @@
 "use server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { BoardType, TaskType } from "./types";
-
-// export async function fetchTasks() {
-//   const res = await fetch(`http://localhost:8000/tasks`, { cache: "no-cache" });
-//   const data = await res.json();
-//   return data;
-// }
-
-// export async function fetchBoards() {
-//   const res = await fetch(`http://localhost:8000/boards`, {
-//     cache: "no-cache",
-//   });
-//   const data = await res.json();
-//   return data;
-// }
+import { BoardType } from "./types";
 
 export async function fetchBoards(slug?: string) {
-  let data;
+  let data: BoardType[];
   if (!slug) {
     const res = await fetch(`http://localhost:8000/boards`, {
       next: {
@@ -35,7 +21,7 @@ export async function fetchBoards(slug?: string) {
     data = await res.json();
   }
 
-  return data;
+  return data as BoardType[];
 }
 
 export async function createBoard({
@@ -63,6 +49,7 @@ export async function createBoard({
     if (!res.ok) throw new Error("Creating board failed.");
     resData = await res.json();
     revalidateTag("board");
+    revalidatePath("/", "layout");
   } catch (error) {
     throw error;
   }
@@ -103,6 +90,35 @@ export async function addTodo(
   return resData;
 }
 
+export async function deleteTodo(boardId: string, todoId: string) {
+  const boardsRes = await fetch(`http://localhost:8000/boards/${boardId}`);
+  const board = (await boardsRes.json()) as BoardType;
+
+  if (!board) {
+    throw new Error("Not found");
+  }
+
+  const newBoard = {
+    ...board,
+    tasks: board.tasks.filter((todo) => todo.id !== todoId),
+  };
+
+  const res = await fetch(`http://localhost:8000/boards/${boardId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newBoard),
+  });
+
+  if (!res.ok) throw new Error("Progress cannot updated.");
+
+  const data = await res.json();
+  revalidateTag("board");
+  revalidatePath("/", "layout");
+  return data;
+}
+
 export async function updateTaskProgress(
   boardId: string,
   taskId: string,
@@ -133,5 +149,7 @@ export async function updateTaskProgress(
   if (!res.ok) throw new Error("Progress cannot updated.");
 
   const data = await res.json();
+  revalidateTag("board");
+  revalidatePath("/", "layout");
   return data;
 }

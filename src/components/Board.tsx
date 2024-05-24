@@ -5,11 +5,17 @@ import { useState } from "react";
 import { ProgressType, TaskType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
-import { updateTaskProgress } from "@/lib/fncs";
+import { deleteTodo, fetchBoards, updateTaskProgress } from "@/lib/fncs";
+import { useQuery } from "@tanstack/react-query";
 
-type PropsType = { tasks: TaskType[]; boardId: string };
+type PropsType = { tasks: TaskType[]; boardId: string; slug: string };
 
-export default function Board({ tasks, boardId }: PropsType) {
+export default function Board({ tasks, boardId, slug }: PropsType) {
+  const { data, error, isFetched } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: () => fetchBoards(slug),
+  });
+  console.log(data);
   const [taskItems, setTaskItems] = useState(tasks);
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
@@ -50,6 +56,15 @@ export default function Board({ tasks, boardId }: PropsType) {
     handleChangeTaskProgress(progress, draggedItem.id);
   }
 
+  async function handleDelete(id: string) {
+    try {
+      const res = await deleteTodo(boardId, id);
+      setTaskItems((prev) => prev.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="min-w-[72rem] overflow-x-scroll grid grid-cols-3 divide-x-2 min-h-screen">
       <BoardItems
@@ -58,6 +73,7 @@ export default function Board({ tasks, boardId }: PropsType) {
         onStartDrag={handleStartDrag}
         onDrop={() => handleDropped("todo")}
         isChanging={isLoading}
+        onDelete={handleDelete}
       />
       <BoardItems
         title="DOING"
@@ -65,6 +81,7 @@ export default function Board({ tasks, boardId }: PropsType) {
         onStartDrag={handleStartDrag}
         onDrop={() => handleDropped("doing")}
         isChanging={isLoading}
+        onDelete={handleDelete}
       />
       <BoardItems
         title="DONE"
@@ -72,6 +89,7 @@ export default function Board({ tasks, boardId }: PropsType) {
         onStartDrag={handleStartDrag}
         onDrop={() => handleDropped("done")}
         isChanging={isLoading}
+        onDelete={handleDelete}
       />
     </div>
   );
