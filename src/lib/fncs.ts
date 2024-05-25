@@ -1,23 +1,14 @@
 "use server";
-import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { BoardType } from "./types";
 
 export async function fetchBoards(slug?: string) {
   let data: BoardType[];
   if (!slug) {
-    const res = await fetch(`http://localhost:8000/boards`, {
-      next: {
-        tags: ["board"],
-      },
-    });
+    const res = await fetch(`http://localhost:8000/boards`);
     data = await res.json();
   } else {
-    const res = await fetch(`http://localhost:8000/boards/?slug=${slug}`, {
-      next: {
-        tags: ["board"],
-      },
-    });
+    const res = await fetch(`http://localhost:8000/boards/?slug=${slug}`);
     data = await res.json();
   }
 
@@ -48,8 +39,6 @@ export async function createBoard({
     });
     if (!res.ok) throw new Error("Creating board failed.");
     resData = await res.json();
-    revalidateTag("board");
-    revalidatePath("/", "layout");
   } catch (error) {
     throw error;
   }
@@ -66,7 +55,6 @@ export async function deleteBoard(id: string) {
   const data = await res.json();
 
   if (res.ok) {
-    revalidatePath("/");
     redirect("/");
   }
 }
@@ -86,7 +74,6 @@ export async function addTodo(
   });
   if (!res.ok) throw new Error("Failed to create new todo.");
   const resData = await res.json();
-  revalidateTag("board");
   return resData;
 }
 
@@ -114,8 +101,6 @@ export async function deleteTodo(boardId: string, todoId: string) {
   if (!res.ok) throw new Error("Progress cannot updated.");
 
   const data = await res.json();
-  revalidateTag("board");
-  revalidatePath("/", "layout");
   return data;
 }
 
@@ -149,7 +134,5 @@ export async function updateTaskProgress(
   if (!res.ok) throw new Error("Progress cannot updated.");
 
   const data = await res.json();
-  revalidateTag("board");
-  revalidatePath("/", "layout");
   return data;
 }

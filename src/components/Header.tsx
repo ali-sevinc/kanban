@@ -13,7 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 export default function Header() {
   const pathName = usePathname();
   const [showNewTodo, setShowNewTodo] = useState(false);
-  // const [boards, setBoards] = useState<BoardType[]>([]);
 
   const {
     data: boards,
@@ -23,15 +22,6 @@ export default function Header() {
     queryKey: ["boards"],
     queryFn: () => fetchBoards(),
   });
-
-  // useEffect(function () {
-  //   async function handleFetchBoards() {
-  //     const fetchedBoards = await fetchBoards();
-
-  //     setBoards(fetchedBoards);
-  //   }
-  //   handleFetchBoards();
-  // }, []);
 
   const board = boards?.find((board) => board.slug === pathName);
 

@@ -5,6 +5,7 @@ import InputGroup from "./InputGroup";
 import Button from "./Button";
 import { addTodo } from "@/lib/fncs";
 import { BoardType } from "@/lib/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type PropsType = {
   board: BoardType;
@@ -12,6 +13,21 @@ type PropsType = {
 };
 
 export default function NewTodo({ board, onClose }: PropsType) {
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: ({
+      board,
+      data,
+    }: {
+      board: BoardType;
+      data: { progress: string; body: string; title: string };
+    }) => addTodo(board, data),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
@@ -28,9 +44,8 @@ export default function NewTodo({ board, onClose }: PropsType) {
       id: Math.random().toString(),
     };
 
-    const resData = await addTodo(board, data);
+    mutate({ board, data });
 
-    console.log(resData);
     onClose();
   }
 

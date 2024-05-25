@@ -6,35 +6,53 @@ import { ProgressType, TaskType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
 import { deleteTodo, fetchBoards, updateTaskProgress } from "@/lib/fncs";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type PropsType = { tasks: TaskType[]; boardId: string; slug: string };
 
 export default function Board({ tasks, boardId, slug }: PropsType) {
-  const { data, error, isFetched } = useQuery({
+  const queryCliet = useQueryClient();
+
+  const { data, error } = useQuery({
     queryKey: ["tasks"],
     queryFn: () => fetchBoards(slug),
   });
-  console.log(data);
-  const [taskItems, setTaskItems] = useState(tasks);
+
+  const { mutate: deleteMutation } = useMutation({
+    mutationFn: ({ boardId, id }: { boardId: string; id: string }) =>
+      deleteTodo(boardId, id),
+    onSettled: () => {
+      queryCliet.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const { mutate: updateMutation } = useMutation({
+    mutationFn: ({
+      progress,
+      taskId,
+    }: {
+      progress: "todo" | "doing" | "done";
+      taskId: string;
+    }) => handleChangeTaskProgress(progress, taskId),
+    onSettled: () => {
+      queryCliet.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const taskItems = data?.[0]?.tasks as TaskType[];
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const todo = taskItems.filter((item) => item.progress === "todo");
-  const doing = taskItems.filter((item) => item.progress === "doing");
-  const done = taskItems.filter((item) => item.progress === "done");
+  const todo = taskItems?.filter((item) => item.progress === "todo");
+  const doing = taskItems?.filter((item) => item.progress === "doing");
+  const done = taskItems?.filter((item) => item.progress === "done");
 
   async function handleChangeTaskProgress(
     progress: "todo" | "doing" | "done",
     taskId: string
   ) {
     setIsLoading(true);
-    setTaskItems((prev) =>
-      prev.map((item) =>
-        item.id === taskId ? { ...item, progress: progress } : item
-      )
-    );
     try {
       await updateTaskProgress(boardId, taskId, progress);
     } catch (error) {
@@ -42,24 +60,21 @@ export default function Board({ tasks, boardId, slug }: PropsType) {
     } finally {
       setIsLoading(false);
     }
-    // setTaskItems(data);
   }
 
   function handleStartDrag(task: TaskType) {
-    // console.log(task.id, "start dragged");
     setDraggedItem(task);
   }
 
   function handleDropped(progress: ProgressType) {
     if (!draggedItem) return;
     if (draggedItem.progress === progress) return;
-    handleChangeTaskProgress(progress, draggedItem.id);
+    updateMutation({ progress, taskId: draggedItem.id });
   }
 
   async function handleDelete(id: string) {
     try {
-      const res = await deleteTodo(boardId, id);
-      setTaskItems((prev) => prev.filter((task) => task.id !== id));
+      deleteMutation({ boardId, id });
     } catch (error) {
       console.error(error);
     }

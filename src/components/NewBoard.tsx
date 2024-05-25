@@ -1,16 +1,28 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import TextButton from "./TextButton";
-import Modal from "./Modal";
-import { BoardType } from "@/lib/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import slugify from "slugify";
+
+import { BoardType } from "@/lib/types";
 import { createBoard } from "@/lib/fncs";
-import Button from "./Button";
+
+import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
+import Button from "./Button";
+import Modal from "./Modal";
 
 export default function NewBoard({ boards }: { boards: BoardType[] }) {
   const [showForm, setShowForm] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({ title, slug }: { title: string; slug: string }) =>
+      createBoard({ title, slug }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
+    },
+  });
 
   const [title, setTitle] = useState("");
 
@@ -32,8 +44,7 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
       return;
     }
 
-    const res = await createBoard({ title, slug });
-    console.log(res);
+    mutate({ title, slug });
 
     setShowForm(false);
   }
