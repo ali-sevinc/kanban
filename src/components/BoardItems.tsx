@@ -26,8 +26,10 @@ export default function BoardItems({
   }
 
   return (
-    <div onDrop={handleDrop} onDragOver={handleDragOver} className="px-4">
-      <h2 className="text-center text-xl font-semibold pb-4">{title}</h2>
+    <li onDrop={handleDrop} onDragOver={handleDragOver} className="px-4">
+      <h2 className="text-center text-xl font-semibold pb-4 uppercase">
+        {title}
+      </h2>
       {task.length > 0 ? (
         <ol className="flex flex-col gap-2">
           {task.map((item) => {
@@ -65,6 +67,6 @@ export default function BoardItems({
       ) : (
         <p>No item found.</p>
       )}
-    </div>
+    </li>
   );
 }

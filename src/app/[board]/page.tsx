@@ -1,6 +1,5 @@
 import Board from "@/components/Board";
 import { fetchBoards } from "@/lib/fncs";
-import { BoardType, TaskType } from "@/lib/types";
 
 import {
   dehydrate,
@@ -21,20 +20,9 @@ export default async function BoardPage({
     queryFn: () => fetchBoards(`/${params.board}`),
   });
 
-  let tasks;
-  const fetchedBoard = (await fetchBoards(`/${params.board}`)) as BoardType[];
-
-  tasks = fetchedBoard[0].tasks;
-
-  if (!tasks?.length || !tasks) tasks = [] as TaskType[];
-
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Board
-        slug={`/${params.board}`}
-        tasks={tasks}
-        boardId={fetchedBoard[0].id}
-      />
+      <Board slug={`/${params.board}`} />
     </HydrationBoundary>
   );
 }

@@ -25,6 +25,7 @@ export default function NewTodo({ board, onClose }: PropsType) {
     }) => addTodo(board, data),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
   });
 

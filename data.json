@@ -7,7 +7,7 @@
       "id": "e6bc",
       "tasks": [
         {
-          "progress": "doing",
+          "progress": "todo",
           "id": "1",
           "body": "important to do",
           "title": "Task 1"
@@ -25,13 +25,13 @@
           "title": "Task 3"
         },
         {
-          "progress": "done",
+          "progress": "todo",
           "id": "2",
           "body": "important to doing",
           "title": "Task 4"
         },
         {
-          "progress": "todo",
+          "progress": "doing",
           "id": "3",
           "body": "important to done",
           "title": "Task 5"
@@ -71,42 +71,28 @@
       "id": "0eb6",
       "tasks": [
         {
-          "progress": "doing",
+          "progress": "todo",
           "id": "7",
           "body": "roadmap to-do",
           "title": "Rouadmap 1"
         },
         {
-          "progress": "todo",
+          "progress": "doing",
           "id": "8",
           "body": "roadmap doing",
           "title": "Rouadmap 1"
         },
         {
-          "progress": "doing",
+          "progress": "done",
           "id": "9",
           "body": "roadmap done",
           "title": "Rouadmap 1"
         },
         {
-          "progress": "done",
+          "progress": "todo",
           "title": "qweqwe",
           "body": "qweqwe",
           "id": "0.4379405443026163"
-        }
-      ]
-    },
-    {
-      "id": "8775",
-      "title": "board",
-      "slug": "/board",
-      "boardId": "0.8923517611503287",
-      "tasks": [
-        {
-          "progress": "todo",
-          "title": "todo",
-          "body": "something todo",
-          "id": "0.006993165504628918"
         }
       ]
     }

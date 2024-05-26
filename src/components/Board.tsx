@@ -8,9 +8,9 @@ import BoardItems from "./BoardItems";
 import { deleteTodo, fetchBoards, updateTaskProgress } from "@/lib/fncs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-type PropsType = { tasks: TaskType[]; boardId: string; slug: string };
+type PropsType = { slug: string };
 
-export default function Board({ tasks, boardId, slug }: PropsType) {
+export default function Board({ slug }: PropsType) {
   const queryCliet = useQueryClient();
 
   const { data, error } = useQuery({
@@ -40,19 +40,32 @@ export default function Board({ tasks, boardId, slug }: PropsType) {
   });
 
   const taskItems = data?.[0]?.tasks as TaskType[];
+  const boardId = data?.[0].id;
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const todo = taskItems?.filter((item) => item.progress === "todo");
-  const doing = taskItems?.filter((item) => item.progress === "doing");
-  const done = taskItems?.filter((item) => item.progress === "done");
+  const tasks: { title: "todo" | "doing" | "done"; task: TaskType[] }[] = [
+    {
+      title: "todo",
+      task: taskItems?.filter((item) => item.progress === "todo"),
+    },
+    {
+      title: "doing",
+      task: taskItems?.filter((item) => item.progress === "doing"),
+    },
+    {
+      title: "done",
+      task: taskItems?.filter((item) => item.progress === "done"),
+    },
+  ];
 
   async function handleChangeTaskProgress(
     progress: "todo" | "doing" | "done",
     taskId: string
   ) {
     setIsLoading(true);
+    if (!boardId) return;
     try {
       await updateTaskProgress(boardId, taskId, progress);
     } catch (error) {
@@ -73,6 +86,7 @@ export default function Board({ tasks, boardId, slug }: PropsType) {
   }
 
   async function handleDelete(id: string) {
+    if (!boardId) return;
     try {
       deleteMutation({ boardId, id });
     } catch (error) {
@@ -81,31 +95,18 @@ export default function Board({ tasks, boardId, slug }: PropsType) {
   }
 
   return (
-    <div className="min-w-[72rem] overflow-x-scroll grid grid-cols-3 divide-x-2 min-h-screen">
-      <BoardItems
-        title="TODO"
-        task={todo}
-        onStartDrag={handleStartDrag}
-        onDrop={() => handleDropped("todo")}
-        isChanging={isLoading}
-        onDelete={handleDelete}
-      />
-      <BoardItems
-        title="DOING"
-        task={doing}
-        onStartDrag={handleStartDrag}
-        onDrop={() => handleDropped("doing")}
-        isChanging={isLoading}
-        onDelete={handleDelete}
-      />
-      <BoardItems
-        title="DONE"
-        task={done}
-        onStartDrag={handleStartDrag}
-        onDrop={() => handleDropped("done")}
-        isChanging={isLoading}
-        onDelete={handleDelete}
-      />
-    </div>
+    <ul className="min-w-[72rem] overflow-x-scroll grid grid-cols-3 divide-x-2 min-h-screen">
+      {tasks.map((task) => (
+        <BoardItems
+          key={task.title}
+          title={task.title}
+          task={task.task}
+          onStartDrag={handleStartDrag}
+          onDrop={() => handleDropped(task.title)}
+          isChanging={isLoading}
+          onDelete={handleDelete}
+        />
+      ))}
+    </ul>
   );
 }

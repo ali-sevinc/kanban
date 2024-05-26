@@ -1,6 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { BoardType } from "./types";
+import { revalidatePath } from "next/cache";
 
 export async function fetchBoards(slug?: string) {
   let data: BoardType[];
@@ -11,7 +12,7 @@ export async function fetchBoards(slug?: string) {
     const res = await fetch(`http://localhost:8000/boards/?slug=${slug}`);
     data = await res.json();
   }
-
+  revalidatePath("/");
   return data as BoardType[];
 }
 
