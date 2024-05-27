@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BsKanban } from "react-icons/bs";
+
 import SideMenuItem from "./SideMenuItem";
 
 import { BoardType } from "@/lib/types";
@@ -22,18 +23,21 @@ export default async function Sidebar() {
         <p className="text-center text-zinc-300 py-5">
           Boards ({boards.length})
         </p>
-        <nav className="pr-12 flex flex-col gap-2">
-          <menu>
-            {boards.map((item) => (
-              <SideMenuItem
-                key={item.boardId}
-                title={item.title}
-                href={item.slug}
-                id={item.id}
-              />
-            ))}
-          </menu>
-        </nav>
+        {!boards.length && <h2>No Board Found.</h2>}
+        {boards.length > 0 && (
+          <nav className="pr-12 flex flex-col gap-2">
+            <menu>
+              {boards.map((item) => (
+                <SideMenuItem
+                  key={item.boardId}
+                  title={item.title}
+                  href={item.slug}
+                  id={item.id}
+                />
+              ))}
+            </menu>
+          </nav>
+        )}
         <div className="p-4">
           <NewBoard boards={boards} />
         </div>

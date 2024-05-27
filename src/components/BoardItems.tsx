@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { TaskType } from "@/lib/types";
 import { HiX } from "react-icons/hi";
 
@@ -31,7 +32,7 @@ export default function BoardItems({
         {title}
       </h2>
       {task.length > 0 ? (
-        <ol className="flex flex-col gap-2">
+        <motion.ol className="flex flex-col gap-2">
           {task.map((item) => {
             let progressStyle = "";
             if (item.progress === "todo") progressStyle = "bg-zinc-400";
@@ -39,13 +40,16 @@ export default function BoardItems({
             if (item.progress === "done") progressStyle = "bg-green-400";
 
             return (
-              <li
+              <motion.li
+                layout
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 draggable={!isChanging}
                 onDragStart={() => onStartDrag(item)}
                 key={item.id}
                 className="bg-zinc-700 rounded-xl relative px-4 py-2 mx-4 h-32 cursor-pointer flex flex-col justify-between"
               >
-                <h2 className="font-semibold text-lg">{item.title}</h2>
+                <h3 className="font-semibold text-lg">{item.title}</h3>
                 <p>{item.body}</p>
                 <div className="text-end">
                   <span
@@ -60,10 +64,10 @@ export default function BoardItems({
                 >
                   <HiX />
                 </button>
-              </li>
+              </motion.li>
             );
           })}
-        </ol>
+        </motion.ol>
       ) : (
         <p>No item found.</p>
       )}

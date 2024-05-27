@@ -9,6 +9,7 @@ import { fetchBoards } from "@/lib/fncs";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import { useQuery } from "@tanstack/react-query";
+import { AnimatePresence } from "framer-motion";
 
 export default function Header() {
   const pathName = usePathname();
@@ -40,11 +41,13 @@ export default function Header() {
           </TextButton>
         )}
       </header>
-      {showNewTodo && board && (
-        <Modal open={showNewTodo} onClose={() => setShowNewTodo(false)}>
-          <NewTodo board={board} onClose={() => setShowNewTodo(false)} />
-        </Modal>
-      )}
+      <AnimatePresence mode="wait">
+        {showNewTodo && board && (
+          <Modal open={showNewTodo} onClose={() => setShowNewTodo(false)}>
+            <NewTodo board={board} onClose={() => setShowNewTodo(false)} />
+          </Modal>
+        )}
+      </AnimatePresence>
     </>
   );
 }

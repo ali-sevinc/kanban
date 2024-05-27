@@ -11,6 +11,7 @@ import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
 import Button from "./Button";
 import Modal from "./Modal";
+import { AnimatePresence } from "framer-motion";
 
 export default function NewBoard({ boards }: { boards: BoardType[] }) {
   const [showForm, setShowForm] = useState(false);
@@ -60,30 +61,36 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
       <TextButton onClick={() => setShowForm(true)}>
         +Create New Board
       </TextButton>
-      {showForm && (
-        <Modal open={showForm} onClose={handleCloseForm}>
-          <form onSubmit={handleSubmit} className="text-zinc-50">
-            <h2 className="text-2xl text-center font-semibold pb-4">
-              Create New Board
-            </h2>
+      <AnimatePresence mode="wait">
+        {showForm && (
+          <Modal open={showForm} onClose={handleCloseForm}>
+            <form onSubmit={handleSubmit} className="text-zinc-50">
+              <h2 className="text-2xl text-center font-semibold pb-4">
+                Create New Board
+              </h2>
 
-            <InputGroup
-              id="board-name"
-              label="Board Name"
-              onChange={(e) => setTitle(e)}
-            />
-            {error !== "" && (
-              <p className="text-sm text-red-500 pt-1 text-center">{error}</p>
-            )}
-            <div className="flex items-end justify-center gap-4 pt-8 pb-4">
-              <Button model="secondary" type="button" onClick={handleCloseForm}>
-                Close
-              </Button>
-              <Button type="submit">Create</Button>
-            </div>
-          </form>
-        </Modal>
-      )}
+              <InputGroup
+                id="board-name"
+                label="Board Name"
+                onChange={(e) => setTitle(e)}
+              />
+              {error !== "" && (
+                <p className="text-sm text-red-500 pt-1 text-center">{error}</p>
+              )}
+              <div className="flex items-end justify-center gap-4 pt-8 pb-4">
+                <Button
+                  model="secondary"
+                  type="button"
+                  onClick={handleCloseForm}
+                >
+                  Close
+                </Button>
+                <Button type="submit">Create</Button>
+              </div>
+            </form>
+          </Modal>
+        )}
+      </AnimatePresence>
     </>
   );
 }
