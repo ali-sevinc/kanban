@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence } from "framer-motion";
 import slugify from "slugify";
 
 import { BoardType } from "@/lib/types";
@@ -11,7 +12,6 @@ import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
 import Button from "./Button";
 import Modal from "./Modal";
-import { AnimatePresence } from "framer-motion";
 
 export default function NewBoard({ boards }: { boards: BoardType[] }) {
   const [showForm, setShowForm] = useState(false);
@@ -61,6 +61,7 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
       <TextButton onClick={() => setShowForm(true)}>
         +Create New Board
       </TextButton>
+
       <AnimatePresence mode="wait">
         {showForm && (
           <Modal open={showForm} onClose={handleCloseForm}>

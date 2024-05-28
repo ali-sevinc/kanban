@@ -6,7 +6,6 @@ import Sidebar from "@/components/Sidebar";
 import Provider from "@/utils/Provider";
 
 import "./globals.css";
-export const revalidate = 1;
 
 const kanit = Kanit({
   subsets: ["latin"],

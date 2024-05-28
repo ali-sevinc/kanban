@@ -7,8 +7,6 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-export const revalidate = 1;
-
 export default async function BoardPage({
   params,
 }: {

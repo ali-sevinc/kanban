@@ -12,6 +12,7 @@ export async function fetchBoards(slug?: string) {
     const res = await fetch(`http://localhost:8000/boards/?slug=${slug}`);
     data = await res.json();
   }
+
   revalidatePath("/");
   return data as BoardType[];
 }

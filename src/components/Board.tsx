@@ -11,9 +11,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 type PropsType = { slug: string };
 
 export default function Board({ slug }: PropsType) {
+  const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const queryCliet = useQueryClient();
 
-  const { data, error } = useQuery({
+  const { data, error, isFetching } = useQuery({
     queryKey: ["tasks"],
     queryFn: () => fetchBoards(slug),
   });
@@ -41,9 +45,6 @@ export default function Board({ slug }: PropsType) {
 
   const taskItems = data?.[0]?.tasks as TaskType[];
   const boardId = data?.[0].id;
-  const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const tasks: { title: "todo" | "doing" | "done"; task: TaskType[] }[] = [
     {
