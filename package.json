@@ -10,6 +10,7 @@
     "server": "json-server data.json --port 8000"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.43.4",
     "@tanstack/react-query": "^5.37.1",
     "@tanstack/react-query-devtools": "^5.37.1",
     "framer-motion": "^11.2.6",

@@ -5,11 +5,11 @@ import SideMenuItem from "./SideMenuItem";
 
 import { BoardType } from "@/lib/types";
 
-import { fetchBoards } from "@/lib/fncs";
+import { getBoards } from "@/lib/fncs";
 import NewBoard from "./NewBoard";
 
 export default async function Sidebar() {
-  const boards = (await fetchBoards()) as BoardType[];
+  const { boards } = (await getBoards()) as { boards: BoardType[] };
 
   return (
     <aside className="grid-row-full border-r inline-grid text-zinc-50">

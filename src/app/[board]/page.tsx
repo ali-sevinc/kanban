@@ -1,5 +1,5 @@
 import Board from "@/components/Board";
-import { fetchBoards } from "@/lib/fncs";
+import { getBoards, getTasks } from "@/lib/fncs";
 
 import {
   dehydrate,
@@ -12,15 +12,18 @@ export default async function BoardPage({
 }: {
   params: { board: string };
 }) {
+  const { boards } = await getBoards();
+  const board = boards?.find((board) => board.slug === params.board)!;
+
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["tasks"],
-    queryFn: () => fetchBoards(`/${params.board}`),
+    queryFn: () => getTasks(board?.id),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Board slug={`/${params.board}`} />
+      <Board slug={params.board} />
     </HydrationBoundary>
   );
 }

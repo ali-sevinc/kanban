@@ -2,10 +2,15 @@
 
 import { useState } from "react";
 
-import { ProgressType, TaskType } from "@/lib/types";
+import { BoardType, ProgressType, TaskType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
-import { deleteTodo, fetchBoards, updateTaskProgress } from "@/lib/fncs";
+import {
+  deleteTodo,
+  getBoards,
+  getTasks,
+  updateTaskProgress,
+} from "@/lib/fncs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type PropsType = { slug: string };
@@ -17,18 +22,35 @@ export default function Board({ slug }: PropsType) {
 
   const queryCliet = useQueryClient();
 
-  const { data, error, isFetching } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: () => fetchBoards(slug),
+  const { data: fetchedBoards } = useQuery({
+    queryKey: ["boards"],
+    queryFn: () => getBoards(),
   });
+  let boards: BoardType[] = [];
+  if (fetchedBoards) {
+    boards = fetchedBoards.boards;
+  }
+  console.log(fetchedBoards);
+
+  const boardId = boards?.find((board) => board.slug === slug)?.id!;
+
+  const { data: fetchedTasks } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: () => getTasks(boardId),
+  });
+  let taskItems: TaskType[] = [];
+  if (fetchedTasks) {
+    taskItems = fetchedTasks.tasks;
+  }
 
   const { mutate: deleteMutation } = useMutation({
-    mutationFn: ({ boardId, id }: { boardId: string; id: string }) =>
+    mutationFn: ({ boardId, id }: { boardId: number; id: number }) =>
       deleteTodo(boardId, id),
     onSettled: () => {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
+  console.log(taskItems);
 
   const { mutate: updateMutation } = useMutation({
     mutationFn: ({
@@ -36,34 +58,33 @@ export default function Board({ slug }: PropsType) {
       taskId,
     }: {
       progress: "todo" | "doing" | "done";
-      taskId: string;
+      taskId: number;
     }) => handleChangeTaskProgress(progress, taskId),
     onSettled: () => {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 
-  const taskItems = data?.[0]?.tasks as TaskType[];
-  const boardId = data?.[0].id;
+  // const taskItems = data?.[0]?.tasks as TaskType[];
 
   const tasks: { title: "todo" | "doing" | "done"; task: TaskType[] }[] = [
     {
       title: "todo",
-      task: taskItems?.filter((item) => item.progress === "todo"),
+      task: taskItems?.filter((item) => item.progress === "todo") || [],
     },
     {
       title: "doing",
-      task: taskItems?.filter((item) => item.progress === "doing"),
+      task: taskItems?.filter((item) => item.progress === "doing") || [],
     },
     {
       title: "done",
-      task: taskItems?.filter((item) => item.progress === "done"),
+      task: taskItems?.filter((item) => item.progress === "done") || [],
     },
   ];
 
   async function handleChangeTaskProgress(
     progress: "todo" | "doing" | "done",
-    taskId: string
+    taskId: number
   ) {
     setIsLoading(true);
     if (!boardId) return;
@@ -86,7 +107,7 @@ export default function Board({ slug }: PropsType) {
     updateMutation({ progress, taskId: draggedItem.id });
   }
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: number) {
     if (!boardId) return;
     try {
       deleteMutation({ boardId, id });

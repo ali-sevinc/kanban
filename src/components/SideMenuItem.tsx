@@ -12,16 +12,16 @@ import Button from "./Button";
 import { deleteBoard } from "@/lib/fncs";
 import { AnimatePresence } from "framer-motion";
 
-type PropssType = { title: string; href: string; id: string };
+type PropssType = { title: string; href: string; id: number };
 
 export default function SideMenuItem({ title, href, id }: PropssType) {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const pathName = usePathname();
 
-  const isSelected = href === pathName;
+  const isSelected = href === pathName.slice(1);
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: number) {
     setShowConfirm(false);
     await deleteBoard(id);
   }

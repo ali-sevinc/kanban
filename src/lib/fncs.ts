@@ -1,20 +1,33 @@
 "use server";
 import { redirect } from "next/navigation";
-import { BoardType } from "./types";
+import { BoardType, TaskType } from "./types";
 import { revalidatePath } from "next/cache";
 
-export async function fetchBoards(slug?: string) {
-  let data: BoardType[];
-  if (!slug) {
-    const res = await fetch(`http://localhost:8000/boards`);
-    data = await res.json();
-  } else {
-    const res = await fetch(`http://localhost:8000/boards/?slug=${slug}`);
-    data = await res.json();
-  }
+import { createClient } from "@supabase/supabase-js";
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-  revalidatePath("/");
-  return data as BoardType[];
+// export async function fetchBoards(slug?: string) {
+//   const { boards, error } = await getBoards();
+//   // console.log(supabaseData);
+//   revalidatePath("/");
+//   return { boards, error } as { boards: BoardType[]; error: {} };
+// }
+
+export async function getBoards() {
+  let { data: boards, error } = await supabase
+    .from("boards")
+    .select("*")
+    .eq("userId", "e0081e9d-db25-427d-aca3-b6500216dbf6");
+  return { boards, error } as { boards: BoardType[]; error: {} };
+}
+export async function getTasks(boardId: number) {
+  let { data: tasks, error } = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("boardId", boardId);
+  return { tasks, error } as { tasks: TaskType[]; error: {} };
 }
 
 export async function createBoard({
@@ -47,7 +60,7 @@ export async function createBoard({
   return resData;
 }
 
-export async function deleteBoard(id: string) {
+export async function deleteBoard(id: number) {
   const res = await fetch(`http://localhost:8000/boards/${id}`, {
     method: "DELETE",
     headers: {
@@ -79,7 +92,7 @@ export async function addTodo(
   return resData;
 }
 
-export async function deleteTodo(boardId: string, todoId: string) {
+export async function deleteTodo(boardId: number, todoId: number) {
   const boardsRes = await fetch(`http://localhost:8000/boards/${boardId}`);
   const board = (await boardsRes.json()) as BoardType;
 
@@ -107,8 +120,8 @@ export async function deleteTodo(boardId: string, todoId: string) {
 }
 
 export async function updateTaskProgress(
-  boardId: string,
-  taskId: string,
+  boardId: number,
+  taskId: number,
   newProgress: "todo" | "doing" | "done"
 ) {
   const boardsRes = await fetch(`http://localhost:8000/boards/${boardId}`);

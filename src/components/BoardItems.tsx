@@ -8,7 +8,7 @@ type PropsType = {
   onStartDrag: (item: TaskType) => void;
   onDrop: () => void;
   isChanging: boolean;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 };
 export default function BoardItems({
   task,
@@ -31,7 +31,7 @@ export default function BoardItems({
       <h2 className="text-center text-xl font-semibold pb-4 uppercase">
         {title}
       </h2>
-      {task.length > 0 ? (
+      {task?.length > 0 ? (
         <motion.ol className="flex flex-col gap-2">
           {task.map((item) => {
             let progressStyle = "";

@@ -5,7 +5,7 @@ import TextButton from "./TextButton";
 
 import { BoardType } from "@/lib/types";
 import { useEffect, useState } from "react";
-import { fetchBoards } from "@/lib/fncs";
+import { fetchBoards, getBoards } from "@/lib/fncs";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import { useQuery } from "@tanstack/react-query";
@@ -15,14 +15,14 @@ export default function Header() {
   const pathName = usePathname();
   const [showNewTodo, setShowNewTodo] = useState(false);
 
-  const {
-    data: boards,
-    error,
-    isLoading,
-  } = useQuery({
+  const { data, error, isLoading } = useQuery({
     queryKey: ["boards"],
-    queryFn: () => fetchBoards(),
+    queryFn: () => getBoards(),
   });
+  let boards: BoardType[] = [];
+  if (data) {
+    boards = data.boards;
+  }
 
   const board = boards?.find((board) => board.slug === pathName);
 
