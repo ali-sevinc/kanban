@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import TextButton from "./TextButton";
 
 import { BoardType } from "@/lib/types";
-import { useEffect, useState } from "react";
-import { fetchBoards, getBoards } from "@/lib/fncs";
+import { useState } from "react";
+import { getBoards } from "@/lib/fncs";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import { useQuery } from "@tanstack/react-query";
@@ -24,7 +24,7 @@ export default function Header() {
     boards = data.boards;
   }
 
-  const board = boards?.find((board) => board.slug === pathName);
+  const board = boards?.find((board) => board.slug === pathName.slice(1));
 
   let displayName = "";
   if (pathName === "/") displayName = "home";

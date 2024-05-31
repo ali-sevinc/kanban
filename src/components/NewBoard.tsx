@@ -6,7 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import slugify from "slugify";
 
 import { BoardType } from "@/lib/types";
-import { createBoard } from "@/lib/fncs";
+import { addBoard } from "@/lib/fncs";
 
 import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
@@ -19,7 +19,7 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: ({ title, slug }: { title: string; slug: string }) =>
-      createBoard({ title, slug }),
+      addBoard({ title, slug }),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
@@ -38,7 +38,7 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
       return;
     }
 
-    const slug = `/${slugify(title, { lower: true })}`;
+    const slug = slugify(title, { lower: true });
     const existedSlug = boards.find((item) => item.slug === slug);
     if (existedSlug) {
       setError("Existed board!! Please try something else.");

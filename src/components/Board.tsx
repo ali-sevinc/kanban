@@ -9,6 +9,7 @@ import {
   deleteTodo,
   getBoards,
   getTasks,
+  updateTask,
   updateTaskProgress,
 } from "@/lib/fncs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,7 +31,6 @@ export default function Board({ slug }: PropsType) {
   if (fetchedBoards) {
     boards = fetchedBoards.boards;
   }
-  console.log(fetchedBoards);
 
   const boardId = boards?.find((board) => board.slug === slug)?.id!;
 
@@ -50,7 +50,6 @@ export default function Board({ slug }: PropsType) {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-  console.log(taskItems);
 
   const { mutate: updateMutation } = useMutation({
     mutationFn: ({
@@ -89,7 +88,7 @@ export default function Board({ slug }: PropsType) {
     setIsLoading(true);
     if (!boardId) return;
     try {
-      await updateTaskProgress(boardId, taskId, progress);
+      await updateTask(taskId, progress);
     } catch (error) {
       console.error(error);
     } finally {

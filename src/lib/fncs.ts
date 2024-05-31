@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { BoardType, TaskType } from "./types";
+import { BoardType, ProgressType, TaskType } from "./types";
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@supabase/supabase-js";
@@ -11,15 +11,15 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // export async function fetchBoards(slug?: string) {
 //   const { boards, error } = await getBoards();
 //   // console.log(supabaseData);
-//   revalidatePath("/");
 //   return { boards, error } as { boards: BoardType[]; error: {} };
 // }
-
+const USER_ID = "e0081e9d-db25-427d-aca3-b6500216dbf6";
 export async function getBoards() {
   let { data: boards, error } = await supabase
     .from("boards")
     .select("*")
-    .eq("userId", "e0081e9d-db25-427d-aca3-b6500216dbf6");
+    .eq("userId", USER_ID);
+  revalidatePath("/");
   return { boards, error } as { boards: BoardType[]; error: {} };
 }
 export async function getTasks(boardId: number) {
@@ -27,52 +27,79 @@ export async function getTasks(boardId: number) {
     .from("tasks")
     .select("*")
     .eq("boardId", boardId);
+  revalidatePath("/");
   return { tasks, error } as { tasks: TaskType[]; error: {} };
 }
+export async function updateTask(taskId: number, progress: ProgressType) {
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({ progress })
+    .eq("id", taskId)
+    .select();
 
-export async function createBoard({
-  title,
-  slug,
-}: {
-  title: string;
-  slug: string;
-}) {
-  const data = {
-    title,
-    slug,
-    boardId: Math.random().toString(),
-    tasks: [],
-  };
-  let resData;
-  try {
-    const res = await fetch("http://localhost:8000/boards", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Creating board failed.");
-    resData = await res.json();
-  } catch (error) {
-    throw error;
-  }
-  return resData;
+  revalidatePath("/");
+  return { data, error };
 }
 
-export async function deleteBoard(id: number) {
-  const res = await fetch(`http://localhost:8000/boards/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-
-  if (res.ok) {
-    redirect("/");
-  }
+type AddBoard = { title: string; slug: string };
+export async function addBoard({ title, slug }: AddBoard) {
+  const { data, error } = await supabase
+    .from("boards")
+    .insert([{ title, slug, userId: USER_ID }])
+    .select();
+  revalidatePath("/");
+  return { data, error };
 }
+export async function deleteBoard(boardId: number) {
+  const { error } = await supabase.from("boards").delete().eq("id", boardId);
+  revalidatePath("/");
+  if (!error) redirect("/");
+  return error;
+}
+
+// export async function createBoard({
+//   title,
+//   slug,
+// }: {
+//   title: string;
+//   slug: string;
+// }) {
+//   const data = {
+//     title,
+//     slug,
+//     boardId: Math.random().toString(),
+//     tasks: [],
+//   };
+//   let resData;
+//   try {
+//     const res = await fetch("http://localhost:8000/boards", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(data),
+//     });
+//     if (!res.ok) throw new Error("Creating board failed.");
+//     resData = await res.json();
+//   } catch (error) {
+//     throw error;
+//   }
+//   return resData;
+// }
+
+// export async function deleteBoard(id: number) {
+//   const res = await fetch(`http://localhost:8000/boards/${id}`, {
+//     method: "DELETE",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+//   const data = await res.json();
+
+//   if (res.ok) {
+//     redirect("/");
+//   }
+// }
 
 export async function addTodo(
   board: BoardType,
