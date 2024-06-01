@@ -44,8 +44,7 @@ export default function Board({ slug }: PropsType) {
   }
 
   const { mutate: deleteMutation } = useMutation({
-    mutationFn: ({ boardId, id }: { boardId: number; id: number }) =>
-      deleteTodo(boardId, id),
+    mutationFn: ({ id }: { id: number }) => deleteTodo(id),
     onSettled: () => {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
@@ -103,13 +102,13 @@ export default function Board({ slug }: PropsType) {
   function handleDropped(progress: ProgressType) {
     if (!draggedItem) return;
     if (draggedItem.progress === progress) return;
-    updateMutation({ progress, taskId: draggedItem.id });
+    updateMutation({ progress, taskId: draggedItem.id! });
   }
 
   async function handleDelete(id: number) {
     if (!boardId) return;
     try {
-      deleteMutation({ boardId, id });
+      deleteMutation({ id });
     } catch (error) {
       console.error(error);
     }

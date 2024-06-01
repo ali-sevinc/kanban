@@ -59,7 +59,7 @@ export default function BoardItems({
                   </span>
                 </div>
                 <button
-                  onClick={() => onDelete(item.id)}
+                  onClick={() => onDelete(item.id!)}
                   className="absolute top-2 right-2 hover:text-red-500"
                 >
                   <HiX />

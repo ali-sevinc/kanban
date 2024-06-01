@@ -1,6 +1,6 @@
 export type ProgressType = "todo" | "doing" | "done";
 export type TaskType = {
-  id: number;
+  id?: number;
   progress: ProgressType;
   body: string;
   title: string;

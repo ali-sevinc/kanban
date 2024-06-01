@@ -7,13 +7,14 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
+const USER_ID = process.env.USER_ID;
 
 // export async function fetchBoards(slug?: string) {
 //   const { boards, error } = await getBoards();
 //   // console.log(supabaseData);
 //   return { boards, error } as { boards: BoardType[]; error: {} };
 // }
-const USER_ID = "e0081e9d-db25-427d-aca3-b6500216dbf6";
+
 export async function getBoards() {
   let { data: boards, error } = await supabase
     .from("boards")
@@ -101,50 +102,59 @@ export async function deleteBoard(boardId: number) {
 //   }
 // }
 
-export async function addTodo(
-  board: BoardType,
-  task: { progress: string; body: string; title: string }
-) {
-  if (!board) throw new Error("Board not found.");
-  const data = { ...board, tasks: [...board.tasks, task] };
-  const res = await fetch(`http://localhost:8000/boards/${board.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error("Failed to create new todo.");
-  const resData = await res.json();
-  return resData;
+export async function addTodo(task: TaskType) {
+  const { data, error } = await supabase.from("tasks").insert([task]).select();
+  revalidatePath("/");
 }
 
-export async function deleteTodo(boardId: number, todoId: number) {
-  const boardsRes = await fetch(`http://localhost:8000/boards/${boardId}`);
-  const board = (await boardsRes.json()) as BoardType;
+// export async function addTodo(
+//   board: BoardType,
+//   task: { progress: string; body: string; title: string }
+// ) {
+//   if (!board) throw new Error("Board not found.");
+//   const data = { ...board, tasks: [...board.tasks, task] };
+//   const res = await fetch(`http://localhost:8000/boards/${board.id}`, {
+//     method: "PUT",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(data),
+//   });
+//   if (!res.ok) throw new Error("Failed to create new todo.");
+//   const resData = await res.json();
+//   return resData;
+// }
 
-  if (!board) {
-    throw new Error("Not found");
-  }
-
-  const newBoard = {
-    ...board,
-    tasks: board.tasks.filter((todo) => todo.id !== todoId),
-  };
-
-  const res = await fetch(`http://localhost:8000/boards/${boardId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newBoard),
-  });
-
-  if (!res.ok) throw new Error("Progress cannot updated.");
-
-  const data = await res.json();
-  return data;
+export async function deleteTodo(id: number) {
+  const { error } = await supabase.from("tasks").delete().eq("id", id);
 }
+
+// export async function deleteTodo(boardId: number, todoId: number) {
+//   const boardsRes = await fetch(`http://localhost:8000/boards/${boardId}`);
+//   const board = (await boardsRes.json()) as BoardType;
+
+//   if (!board) {
+//     throw new Error("Not found");
+//   }
+
+//   const newBoard = {
+//     ...board,
+//     tasks: board.tasks.filter((todo) => todo.id !== todoId),
+//   };
+
+//   const res = await fetch(`http://localhost:8000/boards/${boardId}`, {
+//     method: "PUT",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(newBoard),
+//   });
+
+//   if (!res.ok) throw new Error("Progress cannot updated.");
+
+//   const data = await res.json();
+//   return data;
+// }
 
 export async function updateTaskProgress(
   boardId: number,
