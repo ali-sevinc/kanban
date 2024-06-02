@@ -29,7 +29,8 @@ export default function Header() {
   let displayName = "";
   if (pathName === "/") displayName = "home";
   if (pathName !== "/")
-    displayName = boards?.find((item) => item.slug === pathName)?.title || "";
+    displayName =
+      boards?.find((item) => item.slug === pathName.slice(1))?.title || "";
 
   return (
     <>

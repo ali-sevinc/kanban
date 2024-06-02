@@ -5,13 +5,7 @@ import { useState } from "react";
 import { BoardType, ProgressType, TaskType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
-import {
-  deleteTodo,
-  getBoards,
-  getTasks,
-  updateTask,
-  updateTaskProgress,
-} from "@/lib/fncs";
+import { deleteTodo, getBoards, getTasks, updateTask } from "@/lib/fncs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type PropsType = { slug: string };
@@ -62,8 +56,6 @@ export default function Board({ slug }: PropsType) {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-
-  // const taskItems = data?.[0]?.tasks as TaskType[];
 
   const tasks: { title: "todo" | "doing" | "done"; task: TaskType[] }[] = [
     {

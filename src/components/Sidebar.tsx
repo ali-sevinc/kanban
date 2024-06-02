@@ -17,7 +17,7 @@ export default async function Sidebar() {
         <div className="flex gap-4 items-center justify-center h-32 text-4xl">
           <BsKanban />
           <Link href="/" className=" font-semibold">
-            KABAN
+            KANBAN
           </Link>
         </div>
         <p className="text-center text-zinc-300 py-5">
