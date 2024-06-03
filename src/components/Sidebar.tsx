@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { BsKanban } from "react-icons/bs";
 
@@ -7,9 +8,21 @@ import { BoardType } from "@/lib/types";
 
 import { getBoards } from "@/lib/fncs";
 import NewBoard from "./NewBoard";
+import { useEffect, useState } from "react";
+import { useUserContext } from "@/context/user-context";
 
-export default async function Sidebar() {
-  const { boards } = (await getBoards()) as { boards: BoardType[] };
+export default function Sidebar() {
+  const [boards, setBoards] = useState<BoardType[]>([]);
+
+  const { user } = useUserContext();
+
+  useEffect(function () {
+    async function fetchBoards() {
+      const { boards: data } = await getBoards();
+      setBoards(data);
+    }
+    fetchBoards();
+  }, []);
 
   return (
     <aside className="grid-row-full border-r inline-grid text-zinc-50">
@@ -20,27 +33,32 @@ export default async function Sidebar() {
             KANBAN
           </Link>
         </div>
-        <p className="text-center text-zinc-300 py-5">
-          Boards ({boards.length})
-        </p>
-        {!boards.length && <h2>No Board Found.</h2>}
-        {boards.length > 0 && (
-          <nav className="pr-12 flex flex-col gap-2">
-            <menu>
-              {boards.map((item) => (
-                <SideMenuItem
-                  key={item.boardId}
-                  title={item.title}
-                  href={item.slug}
-                  id={item.id}
-                />
-              ))}
-            </menu>
-          </nav>
+
+        {user && (
+          <>
+            <p className="text-center text-zinc-300 py-5">
+              Boards ({boards.length})
+            </p>
+            {!boards.length && <h2>No Board Found.</h2>}
+            {boards.length > 0 && (
+              <nav className="pr-12 flex flex-col gap-2">
+                <menu>
+                  {boards.map((item) => (
+                    <SideMenuItem
+                      key={item.boardId}
+                      title={item.title}
+                      href={item.slug}
+                      id={item.id}
+                    />
+                  ))}
+                </menu>
+              </nav>
+            )}
+            <div className="p-4">
+              <NewBoard boards={boards} />
+            </div>
+          </>
         )}
-        <div className="p-4">
-          <NewBoard boards={boards} />
-        </div>
       </div>
     </aside>
   );

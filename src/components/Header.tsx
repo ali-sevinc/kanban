@@ -10,6 +10,8 @@ import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
+import { useUserContext } from "@/context/user-context";
+import Link from "next/link";
 
 export default function Header() {
   const pathName = usePathname();
@@ -24,6 +26,8 @@ export default function Header() {
     boards = data.boards;
   }
 
+  const { user } = useUserContext();
+
   const board = boards?.find((board) => board.slug === pathName.slice(1));
 
   let displayName = "";
@@ -36,10 +40,15 @@ export default function Header() {
     <>
       <header className="h-24 text-zinc-50 flex items-center justify-between px-12 border-b">
         <h2 className="uppercase">{isLoading ? "Loading..." : displayName}</h2>
-        {pathName !== "/" && (
+        {pathName !== "/" && user && (
           <TextButton onClick={() => setShowNewTodo(true)}>
             +New Todo
           </TextButton>
+        )}
+        {!user ? (
+          <Link href="/auth/login">Login</Link>
+        ) : (
+          <TextButton>Logout</TextButton>
         )}
       </header>
       <AnimatePresence mode="wait">

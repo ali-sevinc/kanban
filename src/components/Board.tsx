@@ -7,6 +7,8 @@ import { BoardType, ProgressType, TaskType } from "@/lib/types";
 import BoardItems from "./BoardItems";
 import { deleteTodo, getBoards, getTasks, updateTask } from "@/lib/fncs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useUserContext } from "@/context/user-context";
+import { redirect } from "next/navigation";
 
 type PropsType = { slug: string };
 
@@ -16,6 +18,8 @@ export default function Board({ slug }: PropsType) {
   const [isLoading, setIsLoading] = useState(false);
 
   const queryCliet = useQueryClient();
+
+  const { user } = useUserContext();
 
   const { data: fetchedBoards } = useQuery({
     queryKey: ["boards"],
@@ -105,6 +109,8 @@ export default function Board({ slug }: PropsType) {
       console.error(error);
     }
   }
+
+  if (!user) redirect("/auth/login");
 
   return (
     <ul className="min-w-[72rem] overflow-x-scroll grid grid-cols-3 divide-x-2 min-h-screen">

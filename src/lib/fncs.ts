@@ -60,3 +60,18 @@ export async function addTodo(task: TaskType) {
 export async function deleteTodo(id: number) {
   const { error } = await supabase.from("tasks").delete().eq("id", id);
 }
+
+export async function loginWithPass({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (error) throw new Error("Ops... Something went wrong!");
+  return data;
+}

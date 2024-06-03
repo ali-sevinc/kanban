@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import Provider from "@/utils/Provider";
 
 import "./globals.css";
+import UserContextProvider from "@/context/user-context";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -26,13 +27,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={kanit.className}>
         <Provider>
-          <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
-            <Header />
-            <Sidebar />
-            <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
-              {children}
-            </main>
-          </div>
+          <UserContextProvider>
+            <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
+              <Header />
+              <Sidebar />
+              <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
+                {children}
+              </main>
+            </div>
+          </UserContextProvider>
         </Provider>
       </body>
     </html>
