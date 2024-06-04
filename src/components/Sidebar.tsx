@@ -13,16 +13,23 @@ import { useUserContext } from "@/context/user-context";
 
 export default function Sidebar() {
   const [boards, setBoards] = useState<BoardType[]>([]);
+  console.log(boards);
 
   const { user } = useUserContext();
 
-  useEffect(function () {
-    async function fetchBoards() {
-      const { boards: data } = await getBoards();
-      setBoards(data);
-    }
-    fetchBoards();
-  }, []);
+  useEffect(
+    function () {
+      async function fetchBoards() {
+        if (!user) return;
+
+        const { boards: data } = await getBoards(user.id);
+        console.log(data);
+        setBoards(data);
+      }
+      fetchBoards();
+    },
+    [user]
+  );
 
   return (
     <aside className="grid-row-full border-r inline-grid text-zinc-50">
@@ -37,13 +44,13 @@ export default function Sidebar() {
         {user && (
           <>
             <p className="text-center text-zinc-300 py-5">
-              Boards ({boards.length})
+              Boards ({boards?.length})
             </p>
-            {!boards.length && <h2>No Board Found.</h2>}
-            {boards.length > 0 && (
+            {!boards?.length && <h2>No Board Found.</h2>}
+            {boards?.length > 0 && (
               <nav className="pr-12 flex flex-col gap-2">
                 <menu>
-                  {boards.map((item) => (
+                  {boards?.map((item) => (
                     <SideMenuItem
                       key={item.boardId}
                       title={item.title}

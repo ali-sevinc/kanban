@@ -9,11 +9,11 @@ const supabaseKey = process.env.SUPABASE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 const USER_ID = process.env.USER_ID;
 
-export async function getBoards() {
+export async function getBoards(id: string) {
   let { data: boards, error } = await supabase
     .from("boards")
     .select("*")
-    .eq("userId", USER_ID);
+    .eq("userId", id);
   revalidatePath("/");
   return { boards, error } as { boards: BoardType[]; error: {} };
 }
@@ -74,4 +74,18 @@ export async function loginWithPass({
   });
   if (error) throw new Error("Ops... Something went wrong!");
   return data;
+}
+
+export async function logoutSupabase() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error("Cannot logout.");
+}
+
+export async function getUser() {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  return user;
 }

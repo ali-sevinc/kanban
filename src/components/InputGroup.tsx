@@ -4,8 +4,14 @@ type PropsType = {
   onChange: (e: string) => void;
   label: string;
   id: string;
+  type?: "text" | "email" | "password";
 };
-export default function InputGroup({ onChange, label, id }: PropsType) {
+export default function InputGroup({
+  onChange,
+  label,
+  id,
+  type = "text",
+}: PropsType) {
   return (
     <div className="flex flex-col">
       <label htmlFor={id} className="text-lg">

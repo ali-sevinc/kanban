@@ -1,11 +1,20 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useState } from "react";
+import { getUser } from "@/lib/fncs";
+import { User } from "@supabase/supabase-js";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-type UserType = { name: string; id: number };
 type UserContextType = {
-  user: UserType | null;
-  login: (data: UserType) => void;
+  user: User | null;
+  login: (data: User) => void;
   logout: () => void;
 };
 const initialState: UserContextType = {
@@ -20,14 +29,32 @@ export default function UserContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const [userData, setUserData] = useState<UserType | null>(null);
+  const [userData, setUserData] = useState<User | null>(null);
 
-  async function login(user: UserType) {
+  const queryClient = useQueryClient();
+
+  const login = useCallback(async function login(user: User | null) {
     setUserData(user);
-  }
+  }, []);
   async function logout() {
     setUserData(null);
   }
+
+  useEffect(
+    function () {
+      async function getInitialUser() {
+        const user = await getUser();
+        if (!user) {
+          login(null);
+          return;
+        }
+        login(user);
+        queryClient.setQueryData(["user"], user);
+      }
+      getInitialUser();
+    },
+    [login, queryClient]
+  );
 
   return (
     <UserContext.Provider value={{ user: userData, login, logout }}>
