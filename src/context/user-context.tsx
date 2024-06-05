@@ -2,7 +2,7 @@
 
 import { getUser } from "@/lib/fncs";
 import { User } from "@supabase/supabase-js";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ReactNode,
   createContext,
@@ -33,9 +33,11 @@ export default function UserContextProvider({
 
   const queryClient = useQueryClient();
 
-  const login = useCallback(async function login(user: User | null) {
+  async function login(user: User | null) {
     setUserData(user);
-  }, []);
+    queryClient.setQueryData(["user"], user);
+  }
+
   async function logout() {
     setUserData(null);
   }
@@ -45,15 +47,15 @@ export default function UserContextProvider({
       async function getInitialUser() {
         const user = await getUser();
         if (!user) {
-          login(null);
+          setUserData(null);
           return;
         }
-        login(user);
+        setUserData(user);
         queryClient.setQueryData(["user"], user);
       }
       getInitialUser();
     },
-    [login, queryClient]
+    [queryClient]
   );
 
   return (

@@ -10,25 +10,28 @@ import { getBoards } from "@/lib/fncs";
 import NewBoard from "./NewBoard";
 import { useEffect, useState } from "react";
 import { useUserContext } from "@/context/user-context";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Sidebar() {
   const [boards, setBoards] = useState<BoardType[]>([]);
-  console.log(boards);
+  const queryClient = useQueryClient();
 
   const { user } = useUserContext();
 
   useEffect(
     function () {
       async function fetchBoards() {
-        if (!user) return;
+        if (!user || !user.id) return;
 
         const { boards: data } = await getBoards(user.id);
-        console.log(data);
+
         setBoards(data);
+
+        queryClient.setQueryData(["boards"], data);
       }
       fetchBoards();
     },
-    [user]
+    [user, user?.id, queryClient]
   );
 
   return (
@@ -52,7 +55,7 @@ export default function Sidebar() {
                 <menu>
                   {boards?.map((item) => (
                     <SideMenuItem
-                      key={item.boardId}
+                      key={item.id}
                       title={item.title}
                       href={item.slug}
                       id={item.id}

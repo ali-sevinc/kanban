@@ -7,14 +7,14 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
-const USER_ID = process.env.USER_ID;
 
 export async function getBoards(id: string) {
-  let { data: boards, error } = await supabase
+  const { data: boards, error } = await supabase
     .from("boards")
     .select("*")
     .eq("userId", id);
   revalidatePath("/");
+  console.log("getBoards:", boards);
   return { boards, error } as { boards: BoardType[]; error: {} };
 }
 export async function getTasks(boardId: number) {
@@ -36,11 +36,11 @@ export async function updateTask(taskId: number, progress: ProgressType) {
   return { data, error };
 }
 
-type AddBoard = { title: string; slug: string };
-export async function addBoard({ title, slug }: AddBoard) {
+type AddBoard = { title: string; slug: string; id: string };
+export async function addBoard({ title, slug, id }: AddBoard) {
   const { data, error } = await supabase
     .from("boards")
-    .insert([{ title, slug, userId: USER_ID }])
+    .insert([{ title, slug, userId: id }])
     .select();
   revalidatePath("/");
   return { data, error };
@@ -68,12 +68,16 @@ export async function loginWithPass({
   email: string;
   password: string;
 }) {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const {
+    data: { user, session },
+    error,
+  } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
+  console.log(session);
   if (error) throw new Error("Ops... Something went wrong!");
-  return data;
+  return user;
 }
 
 export async function logoutSupabase() {
@@ -87,5 +91,6 @@ export async function getUser() {
     error,
   } = await supabase.auth.getUser();
 
+  console.log(["getUser"], user);
   return user;
 }

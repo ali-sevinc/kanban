@@ -4,11 +4,11 @@ import { usePathname } from "next/navigation";
 import TextButton from "./TextButton";
 
 import { BoardType } from "@/lib/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getBoards } from "@/lib/fncs";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { useUserContext } from "@/context/user-context";
 import Link from "next/link";
@@ -16,17 +16,17 @@ import Link from "next/link";
 export default function Header() {
   const pathName = usePathname();
   const [showNewTodo, setShowNewTodo] = useState(false);
+  const [boards, setBoards] = useState<BoardType[] | undefined>([]);
 
+  const queryClient = useQueryClient();
   const { user, logout } = useUserContext();
 
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["boards"],
-    queryFn: user?.id ? () => getBoards(user.id) : () => null,
-  });
-  let boards: BoardType[] = [];
-  if (data?.boards) {
-    boards = data.boards;
-  }
+  useEffect(
+    function () {
+      setBoards(() => queryClient.getQueryData(["boards"]));
+    },
+    [user, queryClient]
+  );
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
 
@@ -39,7 +39,7 @@ export default function Header() {
   return (
     <>
       <header className="h-24 text-zinc-50 flex items-center justify-between px-12 border-b">
-        <h2 className="uppercase">{isLoading ? "Loading..." : displayName}</h2>
+        <h2 className="uppercase">{displayName}</h2>
         <div className="flex gap-4">
           {pathName !== "/" && user && (
             <TextButton onClick={() => setShowNewTodo(true)}>

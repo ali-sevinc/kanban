@@ -20,7 +20,7 @@ export default function Login() {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       loginWithPass({ email, password }),
     onSuccess: (data) => {
-      queryClient.setQueryData(["user"], data?.user);
+      queryClient.setQueryData(["user"], data);
       login(data as unknown as User);
     },
   });

@@ -23,7 +23,7 @@ export default function Board({ slug }: PropsType) {
 
   const { data: fetchedBoards } = useQuery({
     queryKey: ["boards"],
-    queryFn: () => getBoards(),
+    queryFn: () => getBoards(user?.id || ""),
   });
   let boards: BoardType[] = [];
   if (fetchedBoards) {
