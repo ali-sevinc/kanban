@@ -110,7 +110,7 @@ export default function Board({ slug }: PropsType) {
     }
   }
 
-  if (!user) redirect("/auth/login");
+  // if (!user) redirect("/auth/login");
 
   return (
     <ul className="min-w-[72rem] overflow-x-scroll grid grid-cols-3 divide-x-2 min-h-screen">

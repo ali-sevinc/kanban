@@ -22,7 +22,7 @@ export default function InputGroup({
         type="text"
         id={id}
         required
-        className="text-zinc-900 text-xl px-2 w-72 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded"
+        className="text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded"
       />
     </div>
   );

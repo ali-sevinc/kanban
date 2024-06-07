@@ -1,31 +1,36 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import InputGroup from "./InputGroup";
+
+import { User } from "@supabase/supabase-js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { useUserContext } from "@/context/user-context";
-import { loginWithPass } from "@/lib/fncs";
+import { auth } from "@/lib/fncs";
+
+import InputGroup from "./InputGroup";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { User } from "@supabase/supabase-js";
 
 export default function Login() {
+  const [mode, setMode] = useState<"login" | "signup">("login");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useUserContext();
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
+  const router = useRouter();
+
+  const { mutate, error } = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
-      loginWithPass({ email, password }),
+      auth({ mode, email, password }),
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data);
       login(data as unknown as User);
     },
   });
-
-  const router = useRouter();
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -33,15 +38,19 @@ export default function Login() {
 
     mutate({ email, password });
 
-    router.push("/");
+    if (!error) {
+      router.push("/");
+    }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-xl mx-auto mt-24 flex flex-col gap-4"
+      className="max-w-xl mx-auto p-24 flex flex-col gap-4"
     >
-      <h2 className="text-2xl font-semibold">Login</h2>
+      <h2 className="text-2xl font-semibold">
+        {mode === "login" ? "Login" : "Create Account"}
+      </h2>
       <InputGroup
         type="email"
         label="Email"
@@ -54,9 +63,19 @@ export default function Login() {
         id="password"
         onChange={(e) => setPassword(e)}
       />
-      <div>
-        <Button type="submit">Submit</Button>
+      <div className="flex justify-between">
+        <Button type="submit">{mode === "login" ? "Login" : "Singup"}</Button>
       </div>
+      <button
+        type="button"
+        onClick={() =>
+          setMode((prev) => (prev === "login" ? "signup" : "login"))
+        }
+      >
+        {mode === "login"
+          ? "Do you need an account? Go to Create Account page"
+          : "Do you have an account? Go to Login page"}
+      </button>
     </form>
   );
 }

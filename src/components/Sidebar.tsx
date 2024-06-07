@@ -21,7 +21,7 @@ export default function Sidebar() {
   useEffect(
     function () {
       async function fetchBoards() {
-        if (!user || !user.id) return;
+        if (!user?.id) return;
 
         const { boards: data } = await getBoards(user.id);
 

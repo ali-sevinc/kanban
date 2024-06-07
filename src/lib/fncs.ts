@@ -1,19 +1,20 @@
 "use server";
-import { redirect } from "next/navigation";
-import { BoardType, ProgressType, TaskType } from "./types";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-import { createClient } from "@supabase/supabase-js";
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from "./supabase";
+import { createUser, getUserByEmail } from "./user";
+import { hashPassword, verifyPassword } from "./hash";
+import { createAuthSession, deleteSession } from "./auth";
+
+import { BoardType, ProgressType, TaskType } from "./types";
 
 export async function getBoards(id: string) {
   const { data: boards, error } = await supabase
     .from("boards")
     .select("*")
     .eq("userId", id);
-  revalidatePath("/");
+  // revalidatePath("/");
   console.log("getBoards:", boards);
   return { boards, error } as { boards: BoardType[]; error: {} };
 }
@@ -75,7 +76,7 @@ export async function loginWithPass({
     email,
     password,
   });
-  console.log(session);
+
   if (error) throw new Error("Ops... Something went wrong!");
   return user;
 }
@@ -93,4 +94,62 @@ export async function getUser() {
 
   console.log(["getUser"], user);
   return user;
+}
+
+type AuthCredentialsType = {
+  email: string;
+  password: string;
+};
+
+//better-sqllite3 actions
+export async function signup({ email, password }: AuthCredentialsType) {
+  const hashedPassword = hashPassword(password);
+  try {
+    const userId = createUser(email, hashedPassword);
+    console.log(userId);
+    const id = userId.toString();
+    await createAuthSession(id);
+    redirect("/");
+  } catch (error) {
+    const dbError = error as { code: string; message: string };
+    if (dbError?.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      return "Account cannot created. Please choose a diffrent email.";
+    }
+    throw error;
+  }
+}
+
+export async function login({ email, password }: AuthCredentialsType) {
+  const user = getUserByEmail(email);
+  if (!user) {
+    return {
+      error: "Could not login. Plase check your credentials.",
+    };
+  }
+
+  const isPasswordValid = verifyPassword(user.password, password);
+
+  if (!isPasswordValid) {
+    return {
+      error: "Could not login. Plase check your credentials.",
+    };
+  }
+
+  await createAuthSession(user.id.toString());
+
+  redirect("/");
+}
+
+export async function logout() {
+  await deleteSession();
+  redirect("/");
+}
+
+type AuthType = { mode: "login" | "signup"; email: string; password: string };
+export async function auth({ mode, email, password }: AuthType) {
+  if (mode === "login") {
+    login({ email, password });
+  } else {
+    signup({ email, password });
+  }
 }
