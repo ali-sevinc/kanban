@@ -1,6 +1,11 @@
 import Board from "@/components/Board";
-import Home from "@/components/Home";
+import { verifyAuth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function page() {
-  return <Home />;
+export default async function page() {
+  const user = await verifyAuth();
+  if (!user.user || !user.session) {
+    return redirect("/auth/login");
+  }
+  return <Board slug="" user={user} />;
 }

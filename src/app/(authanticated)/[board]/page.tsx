@@ -1,6 +1,7 @@
 import Board from "@/components/Board";
 import { verifyAuth } from "@/lib/auth";
-import { getBoards, getTasks } from "@/lib/fncs";
+import { getBoardByUserId, getTasks } from "@/lib/fncs";
+import { BoardType } from "@/lib/types";
 
 import {
   dehydrate,
@@ -14,14 +15,14 @@ export default async function BoardPage({
 }: {
   params: { board: string };
 }) {
-  const res = await verifyAuth();
-  if (!res.user || !res.session) {
+  const user = await verifyAuth();
+  if (!user.user || !user.session) {
     return redirect("/auth/login");
   }
 
-  console.log("[USER FROM PAGE!]", res);
+  console.log("[USER FROM PAGE!]", user);
 
-  const { boards } = await getBoards();
+  const boards = (await getBoardByUserId(user.user.id)) as BoardType[];
   const board = boards?.find((board) => board.slug === params.board)!;
 
   const queryClient = new QueryClient();
@@ -32,7 +33,7 @@ export default async function BoardPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Board slug={params.board} />
+      <Board slug={params.board} user={user} />
     </HydrationBoundary>
   );
 }

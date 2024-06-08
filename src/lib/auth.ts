@@ -87,4 +87,5 @@ export async function deleteSession() {
     sessionCookie.value,
     sessionCookie.attributes
   );
+  return null;
 }

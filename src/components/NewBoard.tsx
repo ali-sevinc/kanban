@@ -5,21 +5,34 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import slugify from "slugify";
 
-import { BoardType } from "@/lib/types";
-import { addBoard } from "@/lib/fncs";
+import { BoardType, UserType } from "@/lib/types";
+import { addBoard, createBoard } from "@/lib/fncs";
 
 import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
 import Button from "./Button";
 import Modal from "./Modal";
 
-export default function NewBoard({ boards }: { boards: BoardType[] }) {
+export default function NewBoard({
+  boards,
+  user,
+}: {
+  boards: BoardType[];
+  user: UserType;
+}) {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({ title, slug }: { title: string; slug: string }) =>
-      addBoard({ title, slug }),
+    mutationFn: ({
+      title,
+      slug,
+      user_id,
+    }: {
+      title: string;
+      slug: string;
+      user_id: string;
+    }) => createBoard({ title, slug, user_id }),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
@@ -38,14 +51,17 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
       return;
     }
 
+    if (!user.user?.id) return;
+
     const slug = slugify(title, { lower: true });
-    const existedSlug = boards.find((item) => item.slug === slug);
+
+    const existedSlug = boards?.find((item) => item.slug === slug);
     if (existedSlug) {
       setError("Existed board!! Please try something else.");
       return;
     }
 
-    mutate({ title, slug });
+    mutate({ title, slug, user_id: user.user.id });
 
     setShowForm(false);
   }

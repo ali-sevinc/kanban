@@ -1,16 +1,25 @@
+import { Session, User } from "lucia";
+
 export type ProgressType = "todo" | "doing" | "done";
 export type TaskType = {
-  id?: number;
+  id: number;
   progress: ProgressType;
   body: string;
   title: string;
-  boardId: number;
+  board_id: number;
 };
 export type BoardType = {
-  boardId: string;
   title: string;
   slug: string;
   id: number;
-  userId: string;
-  tasks: TaskType[];
+  user_id: string;
 };
+export type UserType =
+  | {
+      user: User;
+      session: Session;
+    }
+  | {
+      user: null;
+      session: null;
+    };

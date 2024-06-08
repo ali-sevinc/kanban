@@ -8,16 +8,17 @@ import { hashPassword, verifyPassword } from "./hash";
 import { createAuthSession, deleteSession } from "./auth";
 
 import { BoardType, ProgressType, TaskType } from "./types";
+import { createNewBoard, deleteBoardById, getBoards } from "./board";
 
-export async function getBoards(id: string) {
-  const { data: boards, error } = await supabase
-    .from("boards")
-    .select("*")
-    .eq("userId", id);
-  // revalidatePath("/");
-  console.log("getBoards:", boards);
-  return { boards, error } as { boards: BoardType[]; error: {} };
-}
+// export async function getBoards(id: string) {
+//   const { data: boards, error } = await supabase
+//     .from("boards")
+//     .select("*")
+//     .eq("userId", id);
+//   // revalidatePath("/");
+//   console.log("getBoards:", boards);
+//   return { boards, error } as { boards: BoardType[]; error: {} };
+// }
 export async function getTasks(boardId: number) {
   let { data: tasks, error } = await supabase
     .from("tasks")
@@ -46,12 +47,12 @@ export async function addBoard({ title, slug, id }: AddBoard) {
   revalidatePath("/");
   return { data, error };
 }
-export async function deleteBoard(boardId: number) {
-  const { error } = await supabase.from("boards").delete().eq("id", boardId);
-  revalidatePath("/");
-  if (!error) redirect("/");
-  return error;
-}
+// export async function deleteBoard(boardId: number) {
+//   const { error } = await supabase.from("boards").delete().eq("id", boardId);
+//   revalidatePath("/");
+//   if (!error) redirect("/");
+//   return error;
+// }
 
 export async function addTodo(task: TaskType) {
   const { data, error } = await supabase.from("tasks").insert([task]).select();
@@ -152,4 +153,29 @@ export async function auth({ mode, email, password }: AuthType) {
   } else {
     signup({ email, password });
   }
+}
+
+export async function createBoard({
+  title,
+  slug,
+  user_id,
+}: {
+  title: string;
+  slug: string;
+  user_id: string;
+}) {
+  const res = createNewBoard({ title, slug, user_id });
+  revalidatePath("/");
+  return res;
+}
+
+export async function getBoardByUserId(id: string) {
+  const res = getBoards(id);
+  return res;
+}
+
+export async function deleteBoard(id: number) {
+  const res = deleteBoardById(id);
+  revalidatePath("/");
+  return res;
 }

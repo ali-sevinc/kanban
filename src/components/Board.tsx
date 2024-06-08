@@ -2,28 +2,26 @@
 
 import { useState } from "react";
 
-import { BoardType, ProgressType, TaskType } from "@/lib/types";
+import { BoardType, ProgressType, TaskType, UserType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
-import { deleteTodo, getBoards, getTasks, updateTask } from "@/lib/fncs";
+import { deleteTodo, getBoardByUserId, getTasks, updateTask } from "@/lib/fncs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "@/context/user-context";
 import { redirect } from "next/navigation";
 
-type PropsType = { slug: string };
+type PropsType = { slug: string; user: UserType };
 
-export default function Board({ slug }: PropsType) {
+export default function Board({ slug, user }: PropsType) {
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const queryCliet = useQueryClient();
 
-  const { user } = useUserContext();
-
   const { data: fetchedBoards } = useQuery({
     queryKey: ["boards"],
-    queryFn: () => getBoards(user?.id || ""),
+    queryFn: () => getBoardByUserId(user.user?.id || ""),
   });
   let boards: BoardType[] = [];
   if (fetchedBoards) {

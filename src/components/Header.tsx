@@ -3,32 +3,23 @@
 import { usePathname } from "next/navigation";
 import TextButton from "./TextButton";
 
-import { BoardType } from "@/lib/types";
+import { BoardType, UserType } from "@/lib/types";
 import { useEffect, useState } from "react";
-import { getBoards } from "@/lib/fncs";
+import { getBoards, logout } from "@/lib/fncs";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
-import { useUserContext } from "@/context/user-context";
 import Link from "next/link";
 
-export default function Header() {
+export default function Header({ user }: { user: UserType }) {
   const pathName = usePathname();
   const [showNewTodo, setShowNewTodo] = useState(false);
   const [boards, setBoards] = useState<BoardType[] | undefined>([]);
 
   const queryClient = useQueryClient();
-  const { user, logout } = useUserContext();
 
-  useEffect(
-    function () {
-      setBoards(() => queryClient.getQueryData(["boards"]));
-    },
-    [user, queryClient]
-  );
-
-  const board = boards?.find((board) => board.slug === pathName.slice(1));
+  const board = boards?.find((board) => board.slug === pathName.slice(1)) || [];
 
   let displayName = "";
   if (pathName === "/") displayName = "home";
@@ -41,15 +32,17 @@ export default function Header() {
       <header className="h-24 text-zinc-50 flex items-center justify-between px-12 border-b">
         <h2 className="uppercase">{displayName}</h2>
         <div className="flex gap-4">
-          {pathName !== "/" && user && (
+          {pathName !== "/" && user.user && user.session && (
             <TextButton onClick={() => setShowNewTodo(true)}>
               +New Todo
             </TextButton>
           )}
-          {!user ? (
+          {!user.user && !user.session ? (
             <Link href="/auth/login">Login</Link>
           ) : (
-            <TextButton onClick={logout}>Logout</TextButton>
+            <form action={logout}>
+              <TextButton type="submit">Logout</TextButton>
+            </form>
           )}
         </div>
       </header>

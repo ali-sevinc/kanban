@@ -7,6 +7,7 @@ import Provider from "@/utils/Provider";
 
 import "./globals.css";
 import UserContextProvider from "@/context/user-context";
+import { verifyAuth } from "@/lib/auth";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -18,19 +19,20 @@ export const metadata: Metadata = {
   description: "Track your tasks.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await verifyAuth();
   return (
     <html lang="en">
       <body className={kanit.className}>
         <Provider>
           <UserContextProvider>
             <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
-              <Header />
-              <Sidebar />
+              <Header user={user} />
+              <Sidebar user={user} />
               <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
                 {children}
               </main>

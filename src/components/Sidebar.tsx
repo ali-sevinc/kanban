@@ -1,37 +1,35 @@
 "use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BsKanban } from "react-icons/bs";
-
-import SideMenuItem from "./SideMenuItem";
-
-import { BoardType } from "@/lib/types";
-
-import { getBoards } from "@/lib/fncs";
-import NewBoard from "./NewBoard";
-import { useEffect, useState } from "react";
-import { useUserContext } from "@/context/user-context";
 import { useQueryClient } from "@tanstack/react-query";
 
-export default function Sidebar() {
+import { BoardType, UserType } from "@/lib/types";
+import { getBoardByUserId } from "@/lib/fncs";
+
+import SideMenuItem from "./SideMenuItem";
+import NewBoard from "./NewBoard";
+
+export default function Sidebar({ user }: { user: UserType }) {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const queryClient = useQueryClient();
 
-  const { user } = useUserContext();
+  // console.log(user);
+  // console.log(boards);
 
   useEffect(
     function () {
       async function fetchBoards() {
-        if (!user?.id) return;
+        if (!user?.user?.id) return;
 
-        const { boards: data } = await getBoards(user.id);
-
+        const data = (await getBoardByUserId(user.user.id)) as BoardType[];
         setBoards(data);
 
         queryClient.setQueryData(["boards"], data);
       }
       fetchBoards();
     },
-    [user, user?.id, queryClient]
+    [user.user, queryClient]
   );
 
   return (
@@ -47,9 +45,11 @@ export default function Sidebar() {
         {user && (
           <>
             <p className="text-center text-zinc-300 py-5">
-              Boards ({boards?.length})
+              Boards ({boards?.length || "0"})
             </p>
-            {!boards?.length && <h2>No Board Found.</h2>}
+            {!boards?.length && (
+              <h2 className="text-center">No Board Found.</h2>
+            )}
             {boards?.length > 0 && (
               <nav className="pr-12 flex flex-col gap-2">
                 <menu>
@@ -65,7 +65,7 @@ export default function Sidebar() {
               </nav>
             )}
             <div className="p-4">
-              <NewBoard boards={boards} />
+              <NewBoard boards={boards} user={user} />
             </div>
           </>
         )}
