@@ -5,7 +5,7 @@ import { BsKanban } from "react-icons/bs";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { BoardType, UserType } from "@/lib/types";
-import { getBoardByUserId } from "@/lib/fncs";
+import { getBoardByUserId } from "@/lib/actions";
 
 import SideMenuItem from "./SideMenuItem";
 import NewBoard from "./NewBoard";

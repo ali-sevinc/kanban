@@ -1,5 +1,5 @@
 import { verifyAuth } from "@/lib/auth";
-import { logout } from "@/lib/fncs";
+import { logout } from "@/lib/actions";
 import Link from "next/link";
 
 export default async function HomeHeader() {

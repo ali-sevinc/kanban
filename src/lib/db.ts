@@ -32,6 +32,7 @@ db.exec(`
     id INTEGER PRIMARY KEY,
     title TEXT,
     body TEXT,
+    progress TEXT,
     board_id TEXT NOT NULL,
     FOREIGN KEY (board_id) REFERENCES boards(id)
   );

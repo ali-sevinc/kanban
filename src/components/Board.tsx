@@ -5,14 +5,19 @@ import { useState } from "react";
 import { BoardType, ProgressType, TaskType, UserType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
-import { deleteTodo, getBoardByUserId, getTasks, updateTask } from "@/lib/fncs";
+import {
+  deleteTask,
+  getBoardByUserId,
+  getTasks,
+  updateTask,
+} from "@/lib/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "@/context/user-context";
 import { redirect } from "next/navigation";
 
-type PropsType = { slug: string; user: UserType };
+type PropsType = { slug: string; user: UserType; taskItems: TaskType[] };
 
-export default function Board({ slug, user }: PropsType) {
+export default function Board({ slug, user, taskItems }: PropsType) {
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -25,24 +30,16 @@ export default function Board({ slug, user }: PropsType) {
   });
   let boards: BoardType[] = [];
   if (fetchedBoards) {
-    boards = fetchedBoards.boards;
+    boards = fetchedBoards;
   }
 
   const boardId = boards?.find((board) => board.slug === slug)?.id!;
 
-  const { data: fetchedTasks } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: () => getTasks(boardId),
-  });
-  let taskItems: TaskType[] = [];
-  if (fetchedTasks) {
-    taskItems = fetchedTasks.tasks;
-  }
-
   const { mutate: deleteMutation } = useMutation({
-    mutationFn: ({ id }: { id: number }) => deleteTodo(id),
+    mutationFn: ({ id }: { id: number }) => deleteTask(id),
     onSettled: () => {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
+      redirect("/boards");
     },
   });
 

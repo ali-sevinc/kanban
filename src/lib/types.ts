@@ -6,7 +6,7 @@ export type TaskType = {
   progress: ProgressType;
   body: string;
   title: string;
-  board_id: number;
+  board_id: string;
 };
 export type BoardType = {
   title: string;

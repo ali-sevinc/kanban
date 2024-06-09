@@ -20,12 +20,14 @@ const lucia = new Lucia(adapter, {
 
 export async function createAuthSession(id: string) {
   const session = await lucia.createSession(id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes
-  );
+  try {
+    const sessionCookie = lucia.createSessionCookie(session.id);
+    cookies().set(
+      sessionCookie.name,
+      sessionCookie.value,
+      sessionCookie.attributes
+    );
+  } catch {}
 }
 
 export async function verifyAuth() {
@@ -87,5 +89,5 @@ export async function deleteSession() {
     sessionCookie.value,
     sessionCookie.attributes
   );
-  return null;
+  return;
 }

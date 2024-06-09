@@ -9,7 +9,7 @@ import { HiX } from "react-icons/hi";
 import Modal from "./Modal";
 import Button from "./Button";
 
-import { deleteBoard } from "@/lib/fncs";
+import { deleteBoard } from "@/lib/actions";
 import { AnimatePresence } from "framer-motion";
 
 type PropssType = { title: string; href: string; id: number };

@@ -1,6 +1,5 @@
 "use client";
 
-import { getUser } from "@/lib/fncs";
 import { User } from "@supabase/supabase-js";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -37,24 +36,9 @@ export default function UserContextProvider({
     queryClient.setQueryData(["user"], user);
   }
 
-  const { data, error } = useQuery({
-    queryFn: () => getUser(),
-    queryKey: ["user"],
-    retry: 0,
-    //only fetch on first-render
-    refetchOnWindowFocus: false,
-  });
-
   async function logout() {
     setUserData(null);
   }
-
-  useEffect(
-    function () {
-      setUserData(data);
-    },
-    [data]
-  );
 
   return (
     <UserContext.Provider value={{ user: userData, login, logout }}>

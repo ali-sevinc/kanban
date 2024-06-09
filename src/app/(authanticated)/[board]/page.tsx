@@ -1,6 +1,6 @@
 import Board from "@/components/Board";
 import { verifyAuth } from "@/lib/auth";
-import { getBoardByUserId, getTasks } from "@/lib/fncs";
+import { getBoardByUserId, getTasks } from "@/lib/actions";
 import { BoardType } from "@/lib/types";
 
 import {
@@ -25,15 +25,18 @@ export default async function BoardPage({
   const boards = (await getBoardByUserId(user.user.id)) as BoardType[];
   const board = boards?.find((board) => board.slug === params.board)!;
 
+  console.log("BOARD PAGE", board);
+  const taskItems = await getTasks(board?.id.toString());
+
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["tasks"],
-    queryFn: () => getTasks(board?.id),
+    queryFn: () => getTasks(board?.id.toString()),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Board slug={params.board} user={user} />
+      <Board slug={params.board} user={user} taskItems={taskItems} />
     </HydrationBoundary>
   );
 }

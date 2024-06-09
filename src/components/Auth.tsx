@@ -1,12 +1,9 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-
-import { User } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { useUserContext } from "@/context/user-context";
-import { auth } from "@/lib/fncs";
+import { auth } from "@/lib/actions";
 
 import InputGroup from "./InputGroup";
 import Button from "./Button";
@@ -17,7 +14,6 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useUserContext();
 
   const queryClient = useQueryClient();
 
@@ -28,19 +24,17 @@ export default function Login() {
       auth({ mode, email, password }),
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data);
-      login(data as unknown as User);
+      router.push("/");
+    },
+    onError: (err) => {
+      console.error(err);
     },
   });
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!email || !password) return;
-
     mutate({ email, password });
-
-    if (!error) {
-      router.push("/");
-    }
   }
 
   return (

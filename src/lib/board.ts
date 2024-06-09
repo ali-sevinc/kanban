@@ -13,7 +13,6 @@ export function createNewBoard({
     .prepare("INSERT INTO boards (title, slug, user_id) VALUES (?, ?, ?)")
     .run(title, slug, user_id);
 
-  console.log("inside of board.ts", res);
   return res;
 }
 

@@ -6,7 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import slugify from "slugify";
 
 import { BoardType, UserType } from "@/lib/types";
-import { addBoard, createBoard } from "@/lib/fncs";
+import { createBoard } from "@/lib/actions";
 
 import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
