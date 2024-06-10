@@ -14,7 +14,13 @@ export type BoardType = {
   id: number;
   user_id: string;
 };
-export type UserType =
+export type UserType = {
+  email: string;
+  password: string;
+  id: number;
+  name: string;
+};
+export type UserVerifyType =
   | {
       user: User;
       session: Session;

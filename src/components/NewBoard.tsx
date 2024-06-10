@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import slugify from "slugify";
 
-import { BoardType, UserType } from "@/lib/types";
+import { BoardType, UserVerifyType } from "@/lib/types";
 import { createBoard } from "@/lib/actions";
 
 import TextButton from "./TextButton";
@@ -18,7 +18,7 @@ export default function NewBoard({
   user,
 }: {
   boards: BoardType[];
-  user: UserType;
+  user: UserVerifyType;
 }) {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();

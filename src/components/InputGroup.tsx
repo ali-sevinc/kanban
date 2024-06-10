@@ -19,7 +19,7 @@ export default function InputGroup({
       </label>
       <input
         onChange={(e) => onChange(e.target.value)}
-        type="text"
+        type={type}
         id={id}
         required
         className="text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded"

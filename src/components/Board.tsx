@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { BoardType, ProgressType, TaskType, UserType } from "@/lib/types";
+import { BoardType, ProgressType, TaskType, UserVerifyType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
 import {
@@ -15,7 +15,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "@/context/user-context";
 import { redirect } from "next/navigation";
 
-type PropsType = { slug: string; user: UserType; taskItems: TaskType[] };
+type PropsType = { slug: string; user: UserVerifyType; taskItems: TaskType[] };
 
 export default function Board({ slug, user, taskItems }: PropsType) {
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);

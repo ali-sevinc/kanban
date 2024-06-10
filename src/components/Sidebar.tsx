@@ -4,13 +4,13 @@ import Link from "next/link";
 import { BsKanban } from "react-icons/bs";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { BoardType, UserType } from "@/lib/types";
+import { BoardType, UserType, UserVerifyType } from "@/lib/types";
 import { getBoardByUserId } from "@/lib/actions";
 
 import SideMenuItem from "./SideMenuItem";
 import NewBoard from "./NewBoard";
 
-export default function Sidebar({ user }: { user: UserType }) {
+export default function Sidebar({ user }: { user: UserVerifyType }) {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const queryClient = useQueryClient();
 

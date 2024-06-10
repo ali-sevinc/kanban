@@ -4,25 +4,30 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 
-import { BoardType, UserType } from "@/lib/types";
-import { getBoardByUserId, logout } from "@/lib/actions";
+import { BoardType, UserType, UserVerifyType } from "@/lib/types";
+import { getBoardByUserId, getUser, logout } from "@/lib/actions";
 
 import TextButton from "./TextButton";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import Link from "next/link";
+import { getUserById } from "@/lib/user";
 
-export default function Header({ user }: { user: UserType }) {
+export default function Header({ user }: { user: UserVerifyType }) {
   const pathName = usePathname();
   const router = useRouter();
   const [showNewTodo, setShowNewTodo] = useState(false);
   const [boards, setBoards] = useState<BoardType[] | undefined>([]);
 
+  const [loggedUser, setLoggedUser] = useState<UserType | null>(null);
+
   useEffect(
     function () {
       async function fetchBoards() {
         if (!user.user) return;
+        const logged = await getUser(user.user.id);
         const res = await getBoardByUserId(user.user?.id);
+        setLoggedUser(logged);
         setBoards(res);
       }
       fetchBoards();
@@ -33,8 +38,9 @@ export default function Header({ user }: { user: UserType }) {
   const board = boards?.find((board) => board.slug === pathName.slice(1));
 
   let displayName = "";
-  if (pathName === "/") displayName = "home";
-  if (pathName !== "/")
+  if (pathName === "/boards")
+    displayName = `Welcome ${loggedUser?.name}` || "Home";
+  if (pathName !== "/boards")
     displayName =
       boards?.find((item) => item.slug === pathName.slice(1))?.title || "";
 

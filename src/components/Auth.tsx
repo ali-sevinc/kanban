@@ -14,14 +14,22 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
   const queryClient = useQueryClient();
 
   const router = useRouter();
 
   const { mutate, error } = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      auth({ mode, email, password }),
+    mutationFn: ({
+      email,
+      password,
+      name,
+    }: {
+      email: string;
+      password: string;
+      name: string;
+    }) => auth({ mode, email, password, name }),
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data);
       router.push("/");
@@ -33,8 +41,9 @@ export default function Login() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!email || !password) return;
-    mutate({ email, password });
+    if (!email || !password || (mode === "signup" && !name)) return;
+
+    mutate({ email, password, name });
   }
 
   return (
@@ -57,6 +66,9 @@ export default function Login() {
         id="password"
         onChange={(e) => setPassword(e)}
       />
+      {mode === "signup" && (
+        <InputGroup label="Name" id="name" onChange={(e) => setName(e)} />
+      )}
       <div className="flex justify-between">
         <Button type="submit">{mode === "login" ? "Login" : "Singup"}</Button>
       </div>

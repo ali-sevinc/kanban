@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 // import { supabase } from "./supabase";
-import { createUser, getUserByEmail } from "./user";
+import { createUser, getUserByEmail, getUserById } from "./user";
 import { hashPassword, verifyPassword } from "./hash";
 import { createAuthSession, deleteSession } from "./auth";
 
@@ -20,11 +20,13 @@ import {
 type AuthCredentialsType = {
   email: string;
   password: string;
+  name?: string;
 };
-export async function signup({ email, password }: AuthCredentialsType) {
+export async function signup({ email, password, name }: AuthCredentialsType) {
   const hashedPassword = hashPassword(password);
   try {
-    const userId = createUser(email, hashedPassword);
+    if (!email || !password || !name) return;
+    const userId = createUser(email, hashedPassword, name);
     console.log(userId);
     const id = userId.toString();
     await createAuthSession(id);
@@ -62,13 +64,21 @@ export async function logout() {
   await deleteSession();
 }
 
-type AuthType = { mode: "login" | "signup"; email: string; password: string };
-export async function auth({ mode, email, password }: AuthType) {
+type AuthType = {
+  mode: "login" | "signup";
+  email: string;
+  password: string;
+  name?: string;
+};
+export async function auth({ mode, email, password, name }: AuthType) {
   if (mode === "login") {
     login({ email, password });
   } else {
-    signup({ email, password });
+    signup({ email, password, name });
   }
+}
+export async function getUser(id: string) {
+  return getUserById(id);
 }
 
 //BOARDS ACTIONS
