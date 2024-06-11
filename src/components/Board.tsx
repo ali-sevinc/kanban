@@ -12,8 +12,6 @@ import {
   updateTask,
 } from "@/lib/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useUserContext } from "@/context/user-context";
-import { redirect } from "next/navigation";
 
 type PropsType = { slug: string; user: UserVerifyType; taskItems: TaskType[] };
 
@@ -35,13 +33,10 @@ export default function Board({ slug, user, taskItems }: PropsType) {
 
   const boardId = boards?.find((board) => board.slug === slug)?.id!;
 
-  const { mutate: deleteMutation } = useMutation({
-    mutationFn: ({ id }: { id: number }) => deleteTask(id),
-    onSettled: () => {
-      queryCliet.invalidateQueries({ queryKey: ["tasks"] });
-      redirect("/boards");
-    },
-  });
+  // const { mutate: deleteMutation } = useMutation({
+  //   mutationFn: ({ id }: { id: number }) => deleteTask(id),
+  //   onSettled: () => router.push("/boards"),
+  // });
 
   const { mutate: updateMutation } = useMutation({
     mutationFn: ({
@@ -97,9 +92,10 @@ export default function Board({ slug, user, taskItems }: PropsType) {
   }
 
   async function handleDelete(id: number) {
-    if (!boardId) return;
+    if (!boardId || !id) return;
+
     try {
-      deleteMutation({ id });
+      await deleteTask(id);
     } catch (error) {
       console.error(error);
     }

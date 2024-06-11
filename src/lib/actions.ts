@@ -102,9 +102,9 @@ export async function getBoardByUserId(id: string) {
 }
 
 export async function deleteBoard(id: number) {
-  const res = deleteBoardById(id);
+  deleteBoardById(id);
   revalidatePath("/");
-  return res;
+  redirect("/boards");
 }
 
 // TASKS ACTIONS
@@ -131,10 +131,13 @@ type AddTodoType = {
 export async function addTodo(task: AddTodoType) {
   const res = newTask(task);
   revalidatePath("/");
+
   return res;
 }
 
 export async function deleteTask(id: number) {
-  deleteTaskById(id);
-  revalidatePath("/");
+  try {
+    deleteTaskById(id);
+    revalidatePath("/");
+  } catch (error) {}
 }

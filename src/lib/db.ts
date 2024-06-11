@@ -35,7 +35,7 @@ db.exec(`
     body TEXT,
     progress TEXT,
     board_id TEXT NOT NULL,
-    FOREIGN KEY (board_id) REFERENCES boards(id)
+    FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE
   );
 `);
 
