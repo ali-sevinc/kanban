@@ -1,10 +1,17 @@
 import db from "./db";
 import { UserType } from "./types";
 
-export function createUser(email: string, password: string, name: string) {
+export function createUser(
+  email: string,
+  password: string,
+  name: string,
+  image: string
+) {
   const res = db
-    .prepare("INSERT INTO users (email, password, name) VALUES (?, ?, ?)")
-    .run(email, password, name);
+    .prepare(
+      "INSERT INTO users (email, password, name, image) VALUES (?, ?, ?, ?)"
+    )
+    .run(email, password, name, image);
   return res.lastInsertRowid;
 }
 

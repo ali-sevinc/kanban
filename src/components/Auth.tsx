@@ -1,87 +1,99 @@
-"use client";
+import { login, signup } from "@/lib/actions";
 
-import { FormEvent, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { auth } from "@/lib/actions";
-
-import InputGroup from "./InputGroup";
 import Button from "./Button";
-import { useRouter } from "next/navigation";
+import { uploadImage } from "@/lib/cloudinary";
+import Link from "next/link";
+import { getUserByEmail } from "@/lib/user";
 
-export default function Login() {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+const inputClass =
+  "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+export default function Login({ mode }: { mode: "login" | "signup" }) {
+  async function authAction(formData: FormData) {
+    "use server";
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const name = formData.get("name") as string;
+    const image = formData.get("image") as File;
 
-  const queryClient = useQueryClient();
+    if (!email || !password) return;
+    if (mode === "signup" && (!name || !image)) return;
 
-  const router = useRouter();
-
-  const { mutate, error } = useMutation({
-    mutationFn: ({
-      email,
-      password,
-      name,
-    }: {
-      email: string;
-      password: string;
-      name: string;
-    }) => auth({ mode, email, password, name }),
-    onSuccess: (data) => {
-      queryClient.setQueryData(["user"], data);
-      router.push("/");
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
-
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    if (!email || !password || (mode === "signup" && !name)) return;
-
-    mutate({ email, password, name });
+    if (mode === "signup") {
+      const user = getUserByEmail(email);
+      if (user.email || user.id) return;
+      const imageUrl = await uploadImage(image);
+      signup({ email, password, name, image: imageUrl });
+    }
+    if (mode === "login") {
+      login({ email, password });
+    }
   }
+  console.log(mode);
 
   return (
     <form
-      onSubmit={handleSubmit}
+      action={authAction}
+      // onSubmit={handleSubmit}
       className="max-w-xl mx-auto p-24 flex flex-col gap-4"
     >
       <h2 className="text-2xl font-semibold">
         {mode === "login" ? "Login" : "Create Account"}
       </h2>
-      <InputGroup
-        type="email"
-        label="Email"
-        id="email"
-        onChange={(e) => setEmail(e)}
-      />
-      <InputGroup
-        type="password"
-        label="Password"
-        id="password"
-        onChange={(e) => setPassword(e)}
-      />
+
+      <div className="flex flex-col">
+        <label className="text-lg" htmlFor="email">
+          Email
+        </label>
+        <input className={inputClass} id="email" name="email" type="email" />
+      </div>
+      <div className="flex flex-col">
+        <label className="text-lg" htmlFor="password">
+          Password
+        </label>
+        <input
+          className={inputClass}
+          id="password"
+          name="password"
+          type="password"
+        />
+      </div>
+
       {mode === "signup" && (
-        <InputGroup label="Name" id="name" onChange={(e) => setName(e)} />
+        <div className="flex flex-col">
+          <label className="text-lg" htmlFor="name">
+            Name
+          </label>
+          <input className={inputClass} type="text" id="name" name="name" />
+        </div>
+      )}
+      {mode === "signup" && (
+        <div className="flex flex-col">
+          <label className="text-lg" htmlFor="image">
+            Image
+          </label>
+          <input
+            className={inputClass}
+            type="file"
+            accept="image/png, image/jpeg"
+            id="image"
+            name="image"
+          />
+        </div>
       )}
       <div className="flex justify-between">
         <Button type="submit">{mode === "login" ? "Login" : "Singup"}</Button>
       </div>
-      <button
-        type="button"
-        onClick={() =>
-          setMode((prev) => (prev === "login" ? "signup" : "login"))
-        }
-      >
-        {mode === "login"
-          ? "Do you need an account? Go to Create Account page"
-          : "Do you have an account? Go to Login page"}
-      </button>
+      {mode === "login" && (
+        <Link href="/auth/login/?mode=signup">
+          Do you need an accound? Go to Signup
+        </Link>
+      )}
+      {mode === "signup" && (
+        <Link href="/auth/login/?mode=login">
+          Have an accound? Go to Login!
+        </Link>
+      )}
     </form>
   );
 }

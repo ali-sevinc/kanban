@@ -15,26 +15,34 @@ import {
   newTask,
   updateTaskById,
 } from "./tasks";
+import { uploadImage } from "./cloudinary";
 
 //AUTHANTICATION ACTIONS
 type AuthCredentialsType = {
   email: string;
   password: string;
   name?: string;
+  image?: string;
 };
-export async function signup({ email, password, name }: AuthCredentialsType) {
+export async function signup({
+  email,
+  password,
+  name,
+  image,
+}: AuthCredentialsType) {
   const hashedPassword = hashPassword(password);
   try {
-    if (!email || !password || !name) return;
-    const userId = createUser(email, hashedPassword, name);
-    console.log(userId);
+    if (!email || !password || !name || !image) return;
+
+    const userId = createUser(email, hashedPassword, name, image);
+
     const id = userId.toString();
     await createAuthSession(id);
     redirect("/");
   } catch (error) {
     const dbError = error as { code: string; message: string };
     if (dbError?.code === "SQLITE_CONSTRAINT_UNIQUE") {
-      return "Account cannot created. Please choose a diffrent email.";
+      return "Account cannot created.";
     }
     throw error;
   }
@@ -64,19 +72,6 @@ export async function logout() {
   await deleteSession();
 }
 
-type AuthType = {
-  mode: "login" | "signup";
-  email: string;
-  password: string;
-  name?: string;
-};
-export async function auth({ mode, email, password, name }: AuthType) {
-  if (mode === "login") {
-    login({ email, password });
-  } else {
-    signup({ email, password, name });
-  }
-}
 export async function getUser(id: string) {
   return getUserById(id);
 }

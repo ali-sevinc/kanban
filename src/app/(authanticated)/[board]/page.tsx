@@ -20,8 +20,6 @@ export default async function BoardPage({
     return redirect("/auth/login");
   }
 
-  console.log("[USER FROM PAGE!]", user);
-
   const boards = (await getBoardByUserId(user.user.id)) as BoardType[];
   const board = boards?.find((board) => board.slug === params.board)!;
 
