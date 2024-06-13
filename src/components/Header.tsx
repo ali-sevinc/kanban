@@ -11,9 +11,15 @@ import TextButton from "./TextButton";
 import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import Link from "next/link";
-import { getUserById } from "@/lib/user";
+import MenuProvider from "./Menu";
 
-export default function Header({ user }: { user: UserVerifyType }) {
+export default function Header({
+  user,
+  userDetails,
+}: {
+  user: UserVerifyType;
+  userDetails: UserType;
+}) {
   const pathName = usePathname();
   const router = useRouter();
   const [showNewTodo, setShowNewTodo] = useState(false);
@@ -36,6 +42,7 @@ export default function Header({ user }: { user: UserVerifyType }) {
   );
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
+  console.log(userDetails);
 
   let displayName = "";
   if (pathName === "/boards")
@@ -60,14 +67,23 @@ export default function Header({ user }: { user: UserVerifyType }) {
           {!user.user && !user.session ? (
             <Link href="/auth/login">Login</Link>
           ) : (
-            <form
-              action={() => {
-                logout();
-                router.push("/");
-              }}
-            >
-              <TextButton type="submit">Logout</TextButton>
-            </form>
+            <MenuProvider>
+              <MenuProvider.Toggle openName="profile">
+                <img
+                  src={userDetails.image}
+                  className="w-14 h-14 rounded-full p-1 border-2 object-cover"
+                />
+              </MenuProvider.Toggle>
+              <MenuProvider.List openName="profile">
+                <MenuProvider.Item>Profile</MenuProvider.Item>
+                <MenuProvider.Item>Test-2</MenuProvider.Item>
+                <MenuProvider.Item>Test-3</MenuProvider.Item>
+                <MenuProvider.Item>Test-4 qasdqweasd</MenuProvider.Item>
+                <MenuProvider.Item onClick={() => logout()}>
+                  Logout
+                </MenuProvider.Item>
+              </MenuProvider.List>
+            </MenuProvider>
           )}
         </div>
       </header>

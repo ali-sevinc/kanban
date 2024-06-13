@@ -19,6 +19,7 @@ export type UserType = {
   password: string;
   id: number;
   name: string;
+  image: string;
 };
 export type UserVerifyType =
   | {
