@@ -31,41 +31,37 @@ export async function signup({
   image,
 }: AuthCredentialsType) {
   const hashedPassword = hashPassword(password);
-  try {
-    if (!email || !password || !name || !image) return;
 
-    const userId = createUser(email, hashedPassword, name, image);
+  if (!email || !password || !name || !image)
+    return {
+      error: "Cannot signup. Please check your credantials.",
+    };
 
-    const id = userId.toString();
-    await createAuthSession(id);
-    redirect("/");
-  } catch (error) {
-    const dbError = error as { code: string; message: string };
-    if (dbError?.code === "SQLITE_CONSTRAINT_UNIQUE") {
-      return "Account cannot created.";
-    }
-    throw error;
-  }
+  const userId = createUser(email, hashedPassword, name, image);
+
+  const id = userId.toString();
+
+  await createAuthSession(id);
 }
 
 export async function login({ email, password }: AuthCredentialsType) {
   const user = getUserByEmail(email);
-  try {
-    if (!user) {
-      throw new Error("Could not login. Plase check your credentials.");
-    }
 
-    const isPasswordValid = verifyPassword(user.password, password);
-
-    if (!isPasswordValid) {
-      throw new Error("Could not login. Plase check your credentials.");
-    }
-
-    await createAuthSession(user.id.toString());
-    redirect("/");
-  } catch (error) {
-    throw new Error("Could not login. Plase check your credentials.");
+  if (!user) {
+    return {
+      error: "Could not login. Plase check your credentials.",
+    };
   }
+
+  const isPasswordValid = verifyPassword(user.password, password);
+
+  if (!isPasswordValid) {
+    return {
+      error: "Could not login. Plase check your credentials.",
+    };
+  }
+
+  await createAuthSession(user.id.toString());
 }
 
 export async function logout() {

@@ -1,6 +1,7 @@
-import Login from "@/components/Auth";
+import Auth from "@/components/Auth";
+import { verifyAuth } from "@/lib/auth";
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
   searchParams: { mode: string };
@@ -8,5 +9,7 @@ export default function LoginPage({
   let mode: "login" | "signup" = "login";
   if (searchParams.mode === "signup") mode = "signup";
 
-  return <Login mode={mode} />;
+  const user = await verifyAuth();
+
+  return <Auth mode={mode} user={user.user} />;
 }

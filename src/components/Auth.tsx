@@ -1,14 +1,23 @@
+import Link from "next/link";
+import { User } from "lucia";
+import { redirect } from "next/navigation";
+
+import { uploadImage } from "@/lib/cloudinary";
 import { login, signup } from "@/lib/actions";
+import { getUserByEmail } from "@/lib/user";
 
 import Button from "./Button";
-import { uploadImage } from "@/lib/cloudinary";
-import Link from "next/link";
-import { getUserByEmail } from "@/lib/user";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
 
-export default function Login({ mode }: { mode: "login" | "signup" }) {
+export default function Auth({
+  mode,
+  user,
+}: {
+  mode: "login" | "signup";
+  user: User | null;
+}) {
   async function authAction(formData: FormData) {
     "use server";
     const email = formData.get("email") as string;
@@ -21,20 +30,19 @@ export default function Login({ mode }: { mode: "login" | "signup" }) {
 
     if (mode === "signup") {
       const user = getUserByEmail(email);
-      if (user.email || user.id) return;
+      if (user?.email || user?.id) return;
       const imageUrl = await uploadImage(image);
-      signup({ email, password, name, image: imageUrl });
+      await signup({ email, password, name, image: imageUrl });
     }
     if (mode === "login") {
-      login({ email, password });
+      await login({ email, password });
     }
   }
-  console.log(mode);
+  if (user) redirect("/boards");
 
   return (
     <form
       action={authAction}
-      // onSubmit={handleSubmit}
       className="max-w-xl mx-auto p-24 flex flex-col gap-4"
     >
       <h2 className="text-2xl font-semibold">

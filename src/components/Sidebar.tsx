@@ -44,9 +44,7 @@ export default function Sidebar({ user }: { user: UserVerifyType }) {
 
         {user && (
           <>
-            <p className="text-center text-zinc-300 py-5">
-              Boards ({boards?.length || "0"})
-            </p>
+            <h2 className="text-center py-4 text-xl font-semibold">Boards</h2>
             {!boards?.length && (
               <h2 className="text-center">No Board Found.</h2>
             )}

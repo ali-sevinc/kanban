@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { TaskType } from "@/lib/types";
-import { HiX } from "react-icons/hi";
+import { HiArchive, HiDotsHorizontal, HiTrash, HiX } from "react-icons/hi";
+import MenuProvider from "./Menu";
 
 type PropsType = {
   task: TaskType[];
@@ -58,12 +59,21 @@ export default function BoardItems({
                     {item.progress}
                   </span>
                 </div>
-                <button
-                  onClick={() => onDelete(item.id!)}
-                  className="absolute top-2 right-2 hover:text-red-500"
-                >
-                  <HiX />
-                </button>
+                <div className="absolute top-2 right-4">
+                  <MenuProvider>
+                    <MenuProvider.Toggle openName={item.id.toString()}>
+                      <HiDotsHorizontal className="text-xl hover:bg-zinc-800 px-1 duration-200" />
+                    </MenuProvider.Toggle>
+                    <MenuProvider.List openName={item.id.toString()}>
+                      <MenuProvider.Item>
+                        <HiArchive />
+                      </MenuProvider.Item>
+                      <MenuProvider.Item onClick={() => onDelete(item.id)}>
+                        <HiTrash />
+                      </MenuProvider.Item>
+                    </MenuProvider.List>
+                  </MenuProvider>
+                </div>
               </motion.li>
             );
           })}

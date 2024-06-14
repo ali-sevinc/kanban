@@ -42,7 +42,6 @@ export default function Header({
   );
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
-  console.log(userDetails);
 
   let displayName = "";
   if (pathName === "/boards")
@@ -50,6 +49,7 @@ export default function Header({
   if (pathName !== "/boards")
     displayName =
       boards?.find((item) => item.slug === pathName.slice(1))?.title || "";
+  if (pathName === "/archive") displayName = "Welcome to Archive";
 
   return (
     <>
@@ -79,6 +79,9 @@ export default function Header({
                 <MenuProvider.Item>Test-2</MenuProvider.Item>
                 <MenuProvider.Item>Test-3</MenuProvider.Item>
                 <MenuProvider.Item>Test-4 qasdqweasd</MenuProvider.Item>
+                <MenuProvider.Item>
+                  <Link href="/archive">Archive</Link>
+                </MenuProvider.Item>
                 <MenuProvider.Item onClick={() => logout()}>
                   Logout
                 </MenuProvider.Item>

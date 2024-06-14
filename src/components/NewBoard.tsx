@@ -46,7 +46,11 @@ export default function NewBoard({
     event.preventDefault();
     setError("");
 
-    if (title.trim().length < 3 || title.toLocaleLowerCase() === "boards") {
+    if (
+      title.trim().length < 3 ||
+      title.toLocaleLowerCase() === "boards" ||
+      title.toLocaleLowerCase() === "archive"
+    ) {
       setError("Please enter a valid board name.");
       return;
     }
