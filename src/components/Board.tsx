@@ -6,6 +6,7 @@ import { BoardType, ProgressType, TaskType, UserVerifyType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
 import {
+  createArchive,
   deleteTask,
   getBoardByUserId,
   getTasks,
@@ -31,7 +32,8 @@ export default function Board({ slug, user, taskItems }: PropsType) {
     boards = fetchedBoards;
   }
 
-  const boardId = boards?.find((board) => board.slug === slug)?.id!;
+  const board = boards?.find((board) => board.slug === slug);
+  const boardId = board?.id!;
 
   // const { mutate: deleteMutation } = useMutation({
   //   mutationFn: ({ id }: { id: number }) => deleteTask(id),
@@ -101,7 +103,25 @@ export default function Board({ slug, user, taskItems }: PropsType) {
     }
   }
 
-  // if (!user) redirect("/auth/login");
+  async function handleAddArchive({
+    id,
+    title,
+    body,
+    progress,
+  }: {
+    id: number;
+    title: string;
+    body: string;
+    progress: ProgressType;
+  }) {
+    const board_name = board?.title;
+    const user_id = user.user?.id;
+    if (!board_name || !user_id) return;
+    const data = { title, body, progress, board_name, user_id };
+    const res = await createArchive(data);
+    await deleteTask(id);
+    console.log(res);
+  }
 
   return (
     <ul className="min-w-[72rem] overflow-x-scroll grid grid-cols-3 divide-x-2 min-h-screen">
@@ -114,6 +134,7 @@ export default function Board({ slug, user, taskItems }: PropsType) {
           onDrop={() => handleDropped(task.title)}
           isChanging={isLoading}
           onDelete={handleDelete}
+          onArchive={handleAddArchive}
         />
       ))}
     </ul>

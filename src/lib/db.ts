@@ -40,4 +40,16 @@ db.exec(`
   );
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS archive (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    body TEXT,
+    progress TEXT,
+    board_name TEXT,
+    user_id TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  )
+`);
+
 export default db;

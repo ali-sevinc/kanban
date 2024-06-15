@@ -30,3 +30,12 @@ export type UserVerifyType =
       user: null;
       session: null;
     };
+
+export type ArchiveType = {
+  id: number;
+  title: string;
+  body: string;
+  progress: ProgressType;
+  board_name: string;
+  user_id: string;
+};

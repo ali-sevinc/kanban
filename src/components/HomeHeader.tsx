@@ -13,6 +13,7 @@ export default async function HomeHeader() {
       <div className="flex gap-4">
         <Link href="/">Home</Link>
         {isAuth && <Link href="/boards">Boards</Link>}
+        {isAuth && <Link href="/archive">Archive</Link>}
       </div>
       {!isAuth && <Link href="/auth/login">Login</Link>}
       {isAuth && (

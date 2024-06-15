@@ -7,7 +7,7 @@ import { createUser, getUserByEmail, getUserById } from "./user";
 import { hashPassword, verifyPassword } from "./hash";
 import { createAuthSession, deleteSession } from "./auth";
 
-import { BoardType, ProgressType, TaskType } from "./types";
+import { ArchiveType, BoardType, ProgressType, TaskType } from "./types";
 import { createNewBoard, deleteBoardById, getBoards } from "./board";
 import {
   deleteTaskById,
@@ -16,6 +16,7 @@ import {
   updateTaskById,
 } from "./tasks";
 import { uploadImage } from "./cloudinary";
+import { addToArchive, getArchiveByUserId } from "./archive";
 
 //AUTHANTICATION ACTIONS
 type AuthCredentialsType = {
@@ -131,4 +132,23 @@ export async function deleteTask(id: number) {
     deleteTaskById(id);
     revalidatePath("/");
   } catch (error) {}
+}
+
+//ARCHIVE ACTIONS
+type AddArchiveType = {
+  title: string;
+  body: string;
+  progress: ProgressType;
+  board_name: string;
+  user_id: string;
+};
+export async function createArchive(data: AddArchiveType) {
+  const res = addToArchive(data);
+  revalidatePath("/");
+  return res;
+}
+
+export async function fetchArchive(user_id: string) {
+  const res = getArchiveByUserId(user_id);
+  return res as ArchiveType[];
 }

@@ -1,15 +1,26 @@
 import { motion } from "framer-motion";
-import { TaskType } from "@/lib/types";
+import { ProgressType, TaskType } from "@/lib/types";
 import { HiArchive, HiDotsHorizontal, HiTrash, HiX } from "react-icons/hi";
 import MenuProvider from "./Menu";
 
 type PropsType = {
   task: TaskType[];
   title: string;
+  isChanging: boolean;
   onStartDrag: (item: TaskType) => void;
   onDrop: () => void;
-  isChanging: boolean;
   onDelete: (id: number) => void;
+  onArchive: ({
+    id,
+    title,
+    body,
+    progress,
+  }: {
+    id: number;
+    title: string;
+    body: string;
+    progress: ProgressType;
+  }) => void;
 };
 export default function BoardItems({
   task,
@@ -18,6 +29,7 @@ export default function BoardItems({
   onDrop,
   isChanging,
   onDelete,
+  onArchive,
 }: PropsType) {
   function handleDrop(event: React.DragEvent) {
     event.preventDefault();
@@ -65,7 +77,16 @@ export default function BoardItems({
                       <HiDotsHorizontal className="text-xl hover:bg-zinc-800 px-1 duration-200" />
                     </MenuProvider.Toggle>
                     <MenuProvider.List openName={item.id.toString()}>
-                      <MenuProvider.Item>
+                      <MenuProvider.Item
+                        onClick={() =>
+                          onArchive({
+                            id: item.id,
+                            title: item.title,
+                            body: item.body,
+                            progress: item.progress,
+                          })
+                        }
+                      >
                         <HiArchive />
                       </MenuProvider.Item>
                       <MenuProvider.Item onClick={() => onDelete(item.id)}>
