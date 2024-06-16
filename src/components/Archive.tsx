@@ -1,26 +1,25 @@
 import { ArchiveType } from "@/lib/types";
-
-const progress = {
-  todo: "bg-zinc-400",
-  doing: "bg-blue-400",
-  done: "bg-green-400",
-};
+import ArchiveItem from "./ArchiveItem";
 
 export default function Archive({ archive }: { archive: ArchiveType[] }) {
-  console.log(archive);
   return (
-    <ul className="divide-y">
-      {archive.length > 0 &&
-        archive.map((item) => (
-          <li key={item.id} className="">
-            <h2>{item.board_name}</h2>
-            <p>{item.title}</p>
-            <p>{item.body}</p>
-            <span className={`${progress[item.progress]}`}>
-              {item.progress}
-            </span>
-          </li>
-        ))}
-    </ul>
+    <>
+      {archive.length > 0 ? (
+        <ul className="divide-y flex flex-col gap-1">
+          {archive.map((item) => (
+            <ArchiveItem
+              key={item.id}
+              board_name={item.board_name}
+              body={item.body}
+              progress={item.progress}
+              title={item.title}
+              id={item.id}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p className="text-center text-xl py-4">There is no task in archive.</p>
+      )}
+    </>
   );
 }

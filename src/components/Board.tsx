@@ -120,7 +120,6 @@ export default function Board({ slug, user, taskItems }: PropsType) {
     const data = { title, body, progress, board_name, user_id };
     const res = await createArchive(data);
     await deleteTask(id);
-    console.log(res);
   }
 
   return (

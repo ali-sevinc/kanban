@@ -3,7 +3,7 @@ import db from "./db";
 type AddType = {
   title: string;
   body: string;
-  progress: string;
+  progress: "todo" | "doing" | "done";
   board_name: string;
   user_id: string;
 };

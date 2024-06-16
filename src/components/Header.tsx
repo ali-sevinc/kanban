@@ -59,7 +59,8 @@ export default function Header({
           {pathName !== "/" &&
             user.user &&
             user.session &&
-            pathName !== "/boards" && (
+            pathName !== "/boards" &&
+            pathName !== "/archive" && (
               <TextButton onClick={() => setShowNewTodo(true)}>
                 +New Todo
               </TextButton>

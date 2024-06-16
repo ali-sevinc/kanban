@@ -16,7 +16,7 @@ import {
   updateTaskById,
 } from "./tasks";
 import { uploadImage } from "./cloudinary";
-import { addToArchive, getArchiveByUserId } from "./archive";
+import { addToArchive, deleteArchiveById, getArchiveByUserId } from "./archive";
 
 //AUTHANTICATION ACTIONS
 type AuthCredentialsType = {
@@ -151,4 +151,10 @@ export async function createArchive(data: AddArchiveType) {
 export async function fetchArchive(user_id: string) {
   const res = getArchiveByUserId(user_id);
   return res as ArchiveType[];
+}
+
+export async function deleteArchive(id: number) {
+  const res = deleteArchiveById(id);
+  revalidatePath("/");
+  return res;
 }

@@ -100,7 +100,7 @@ export default function BoardItems({
           })}
         </motion.ol>
       ) : (
-        <p>No item found.</p>
+        <p className="text-center text-lg">No task found.</p>
       )}
     </li>
   );
