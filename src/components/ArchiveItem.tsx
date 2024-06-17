@@ -29,7 +29,7 @@ export default function ArchiveItem({
   }
 
   return (
-    <li className="relative">
+    <li className="relative border pl-4 pr-8 min-w-[24rem] py-2 rounded">
       <p>
         <span className="italic">Board Name: </span>{" "}
         <span className="uppercase text-lg">{board_name} </span>

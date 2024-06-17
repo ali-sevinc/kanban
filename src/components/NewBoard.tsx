@@ -49,7 +49,8 @@ export default function NewBoard({
     if (
       title.trim().length < 3 ||
       title.toLocaleLowerCase() === "boards" ||
-      title.toLocaleLowerCase() === "archive"
+      title.toLocaleLowerCase() === "archive" ||
+      title.toLocaleLowerCase() === "profile"
     ) {
       setError("Please enter a valid board name.");
       return;

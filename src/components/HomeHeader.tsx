@@ -12,8 +12,13 @@ export default async function HomeHeader() {
     <header className="w-[60%] mx-auto flex justify-between py-4 text-xl">
       <div className="flex gap-4">
         <Link href="/">Home</Link>
-        {isAuth && <Link href="/boards">Boards</Link>}
-        {isAuth && <Link href="/archive">Archive</Link>}
+        {isAuth && (
+          <>
+            <Link href="/boards">Boards</Link>
+            <Link href="/archive">Archive</Link>
+            <Link href="/profile">Profile</Link>
+          </>
+        )}
       </div>
       {!isAuth && <Link href="/auth/login">Login</Link>}
       {isAuth && (

@@ -112,7 +112,10 @@ function Item({ children, onClick }: ItemType) {
 
   return (
     <li className="hover:bg-zinc-700 duration-200 ">
-      <button onClick={handleClick} className="w-full px-2">
+      <button
+        onClick={handleClick}
+        className="w-full px-2 flex items-center justify-between gap-1"
+      >
         {children}
       </button>
     </li>

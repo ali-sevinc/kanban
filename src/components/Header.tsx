@@ -12,6 +12,7 @@ import Modal from "./Modal";
 import NewTodo from "./NewTodo";
 import Link from "next/link";
 import MenuProvider from "./Menu";
+import { HiArchive, HiLogout, HiUser } from "react-icons/hi";
 
 export default function Header({
   user,
@@ -49,7 +50,8 @@ export default function Header({
   if (pathName !== "/boards")
     displayName =
       boards?.find((item) => item.slug === pathName.slice(1))?.title || "";
-  if (pathName === "/archive") displayName = "Welcome to Archive";
+  if (pathName === "/archive") displayName = "Archive";
+  if (pathName === "/profile") displayName = "Profile";
 
   return (
     <>
@@ -60,9 +62,10 @@ export default function Header({
             user.user &&
             user.session &&
             pathName !== "/boards" &&
-            pathName !== "/archive" && (
+            pathName !== "/archive" &&
+            pathName !== "/profile" && (
               <TextButton onClick={() => setShowNewTodo(true)}>
-                +New Todo
+                +New Task
               </TextButton>
             )}
           {!user.user && !user.session ? (
@@ -76,15 +79,33 @@ export default function Header({
                 />
               </MenuProvider.Toggle>
               <MenuProvider.List openName="profile">
-                <MenuProvider.Item>Profile</MenuProvider.Item>
-                <MenuProvider.Item>Test-2</MenuProvider.Item>
-                <MenuProvider.Item>Test-3</MenuProvider.Item>
-                <MenuProvider.Item>Test-4 qasdqweasd</MenuProvider.Item>
                 <MenuProvider.Item>
-                  <Link href="/archive">Archive</Link>
+                  <Link
+                    href="/profile"
+                    className="flex gap-1 items-center justify-between w-full"
+                  >
+                    <span>Profile</span>{" "}
+                    <span>
+                      <HiUser />
+                    </span>
+                  </Link>
+                </MenuProvider.Item>
+                <MenuProvider.Item>
+                  <Link
+                    href="/archive"
+                    className="flex gap-1 items-center justify-between w-full"
+                  >
+                    <span>Archive</span>{" "}
+                    <span>
+                      <HiArchive />
+                    </span>
+                  </Link>
                 </MenuProvider.Item>
                 <MenuProvider.Item onClick={() => logout()}>
-                  Logout
+                  <span>Logout</span>
+                  <span>
+                    <HiLogout />
+                  </span>
                 </MenuProvider.Item>
               </MenuProvider.List>
             </MenuProvider>

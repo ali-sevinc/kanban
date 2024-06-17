@@ -5,7 +5,7 @@ export default function Archive({ archive }: { archive: ArchiveType[] }) {
   return (
     <>
       {archive.length > 0 ? (
-        <ul className="divide-y flex flex-col gap-1">
+        <ul className="grid grid-cols-3 gap-4 min-w-[72rem]">
           {archive.map((item) => (
             <ArchiveItem
               key={item.id}
