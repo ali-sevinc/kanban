@@ -29,3 +29,8 @@ export async function uploadImage(image: File) {
   });
   return result.secure_url;
 }
+
+export async function deleteImage(publicId: string) {
+  const result = await cloudinary.uploader.destroy(publicId);
+  return result;
+}

@@ -3,7 +3,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 // import { supabase } from "./supabase";
-import { createUser, getUserByEmail, getUserById } from "./user";
+import {
+  changeImage,
+  changeName,
+  changePassword,
+  createUser,
+  getUserByEmail,
+  getUserById,
+} from "./user";
 import { hashPassword, verifyPassword } from "./hash";
 import { createAuthSession, deleteSession } from "./auth";
 
@@ -15,7 +22,7 @@ import {
   newTask,
   updateTaskById,
 } from "./tasks";
-import { uploadImage } from "./cloudinary";
+import { deleteImage, uploadImage } from "./cloudinary";
 import { addToArchive, deleteArchiveById, getArchiveByUserId } from "./archive";
 
 //AUTHANTICATION ACTIONS
@@ -69,8 +76,36 @@ export async function logout() {
   await deleteSession();
 }
 
-export async function getUser(id: string) {
+export async function getUser(id: number) {
   return getUserById(id);
+}
+
+//UPDATE USER
+export async function updateImageById(imageUrl: string, id: number) {
+  const user = await getUser(id);
+
+  if (!user.id) return;
+
+  const publicId = "kanban" + user.image.split("/kanban")[1].split(".")[0];
+
+  if (!publicId) return;
+
+  await deleteImage(publicId);
+
+  const res = changeImage(imageUrl, id);
+  revalidatePath("/");
+  return res;
+}
+export async function updateNameById(name: string, id: number) {
+  const res = changeName(name, id);
+  revalidatePath("/");
+  return res;
+}
+export async function updatePasswordById(password: string, id: number) {
+  const hashedPassword = hashPassword(password);
+  const res = changePassword(hashedPassword, id);
+  revalidatePath("/");
+  return res;
 }
 
 //BOARDS ACTIONS
