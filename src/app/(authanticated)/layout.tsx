@@ -6,7 +6,6 @@ import Sidebar from "@/components/Sidebar";
 import Provider from "@/utils/Provider";
 
 import "./globals.css";
-import UserContextProvider from "@/context/user-context";
 import { verifyAuth } from "@/lib/auth";
 import { getUser } from "@/lib/actions";
 import { redirect } from "next/navigation";
@@ -34,15 +33,13 @@ export default async function RootLayout({
     <html lang="en">
       <body className={kanit.className}>
         <Provider>
-          <UserContextProvider>
-            <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
-              <Header user={user} userDetails={userDetails} />
-              <Sidebar user={user} />
-              <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
-                {children}
-              </main>
-            </div>
-          </UserContextProvider>
+          <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
+            <Header user={user} userDetails={userDetails} />
+            <Sidebar user={user} />
+            <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
+              {children}
+            </main>
+          </div>
         </Provider>
       </body>
     </html>

@@ -5,7 +5,6 @@ import { Kanit } from "next/font/google";
 
 import "./globals.css";
 import Provider from "@/utils/Provider";
-import Link from "next/link";
 import HomeHeader from "@/components/HomeHeader";
 
 const kanit = Kanit({
