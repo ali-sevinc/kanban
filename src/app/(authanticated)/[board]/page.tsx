@@ -23,7 +23,7 @@ export default async function BoardPage({
   const boards = (await getBoardByUserId(user.user.id)) as BoardType[];
   const board = boards?.find((board) => board.slug === params.board)!;
 
-  console.log("BOARD PAGE", board);
+  // console.log("BOARD PAGE", board);
   const taskItems = await getTasks(board?.id.toString());
 
   const queryClient = new QueryClient();

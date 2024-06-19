@@ -95,7 +95,7 @@ function List({
     <ul
       ref={ref}
       style={{ right: position?.x, top: position?.y }}
-      className="fixed z-10 bg-zinc-900 text-zinc-50 py-2 rounded-sm px-1"
+      className="fixed z-10 bg-zinc-900 text-zinc-50 flex flex-col gap-0.5 py-2 rounded-sm px-1"
     >
       {children}
     </ul>
@@ -114,7 +114,7 @@ function Item({ children, onClick }: ItemType) {
     <li className="hover:bg-zinc-700 duration-200 ">
       <button
         onClick={handleClick}
-        className="w-full px-2 flex items-center justify-between gap-1"
+        className="w-full px-2 py-0.5 flex items-center justify-between gap-1"
       >
         {children}
       </button>

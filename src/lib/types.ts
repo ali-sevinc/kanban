@@ -39,3 +39,11 @@ export type ArchiveType = {
   board_name: string;
   user_id: string;
 };
+
+export type AuthFormState = {
+  email?: string;
+  password?: string;
+  name?: string;
+  image?: string;
+  login?: string;
+};

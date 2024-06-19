@@ -1,12 +1,11 @@
+"use client";
 import Link from "next/link";
 import { User } from "lucia";
 import { redirect } from "next/navigation";
 
-import { uploadImage } from "@/lib/cloudinary";
-import { login, signup } from "@/lib/actions";
-import { getUserByEmail } from "@/lib/user";
-
 import Button from "./Button";
+import { useFormState } from "react-dom";
+import { AuthFormState } from "@/lib/types";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
@@ -14,35 +13,19 @@ const inputClass =
 export default function Auth({
   mode,
   user,
+  authAction,
 }: {
   mode: "login" | "signup";
   user: User | null;
+  authAction: (prev: {}, formData: FormData) => Promise<AuthFormState>;
 }) {
-  async function authAction(formData: FormData) {
-    "use server";
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const name = formData.get("name") as string;
-    const image = formData.get("image") as File;
+  const [state, formAction] = useFormState(authAction, {} as AuthFormState);
 
-    if (!email || !password) return;
-    if (mode === "signup" && (!name || !image)) return;
-
-    if (mode === "signup") {
-      const user = getUserByEmail(email);
-      if (user?.email || user?.id) return;
-      const imageUrl = await uploadImage(image);
-      await signup({ email, password, name, image: imageUrl });
-    }
-    if (mode === "login") {
-      await login({ email, password });
-    }
-  }
   if (user) redirect("/boards");
 
   return (
     <form
-      action={authAction}
+      action={formAction}
       className="max-w-xl mx-auto p-24 flex flex-col gap-4"
     >
       <h2 className="text-2xl font-semibold">
@@ -54,6 +37,7 @@ export default function Auth({
           Email
         </label>
         <input className={inputClass} id="email" name="email" type="email" />
+        {state?.email && <p className="text-red-500">{state.email}</p>}
       </div>
       <div className="flex flex-col">
         <label className="text-lg" htmlFor="password">
@@ -65,6 +49,7 @@ export default function Auth({
           name="password"
           type="password"
         />
+        {state?.password && <p className="text-red-500">{state.password}</p>}
       </div>
 
       {mode === "signup" && (
@@ -73,25 +58,28 @@ export default function Auth({
             Name
           </label>
           <input className={inputClass} type="text" id="name" name="name" />
+          {state?.name && <p className="text-red-500">{state.name}</p>}
         </div>
       )}
       {mode === "signup" && (
-        <div className="flex flex-col">
+        <div className="flex flex-col ">
           <label className="text-lg" htmlFor="image">
             Image
           </label>
           <input
-            className={inputClass}
+            className={`text-zinc-50 ${inputClass} bg-zinc-50`}
             type="file"
             accept="image/png, image/jpeg"
             id="image"
             name="image"
           />
+          {state?.image && <p className="text-red-500">{state.image}</p>}
         </div>
       )}
       <div className="flex justify-between">
         <Button type="submit">{mode === "login" ? "Login" : "Singup"}</Button>
       </div>
+      {state.login && <p className="text-red-500">{state.login}</p>}
       {mode === "login" && (
         <Link href="/auth/login/?mode=signup">
           Do you need an accound? Go to Signup
