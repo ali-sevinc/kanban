@@ -32,7 +32,7 @@ export default function Header({
     function () {
       async function fetchBoards() {
         if (!user.user) return;
-        const logged = await getUser(user.user.id);
+        const logged = await getUser(+user.user.id);
         const res = await getBoardByUserId(user.user?.id);
         setLoggedUser(logged);
         setBoards(res);
@@ -76,6 +76,7 @@ export default function Header({
                 <img
                   src={userDetails.image}
                   className="w-14 h-14 rounded-full p-1 border-2 object-cover"
+                  alt={`${userDetails.name} profile picture.`}
                 />
               </MenuProvider.Toggle>
               <MenuProvider.List openName="profile">

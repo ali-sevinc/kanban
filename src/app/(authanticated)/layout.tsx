@@ -9,6 +9,7 @@ import "./globals.css";
 import UserContextProvider from "@/context/user-context";
 import { verifyAuth } from "@/lib/auth";
 import { getUser } from "@/lib/actions";
+import { redirect } from "next/navigation";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -26,7 +27,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await verifyAuth();
-  const userDetails = await getUser(user.user?.id || "");
+  if (!user.user) redirect("/auth/login");
+  const userDetails = await getUser(+user.user?.id);
 
   return (
     <html lang="en">

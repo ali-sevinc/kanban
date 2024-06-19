@@ -70,6 +70,7 @@ export default function Profile({
           <img
             src={user.image}
             className="rounded-full object-cover w-full h-full"
+            alt={`${user.name} profile picture.`}
           />
         </button>
 
