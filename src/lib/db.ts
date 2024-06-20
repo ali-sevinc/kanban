@@ -1,6 +1,14 @@
 import sql from "better-sqlite3";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const db = sql("kanban.db");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dbpath = path.join(__dirname, "kanban.db");
+
+console.log("*****************************DB PATH", dbpath);
+
+const db = sql(dbpath);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
