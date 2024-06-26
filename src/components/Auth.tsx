@@ -4,8 +4,9 @@ import { User } from "lucia";
 import { redirect } from "next/navigation";
 
 import Button from "./Button";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { AuthFormState } from "@/lib/types";
+import { ReactNode } from "react";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
@@ -76,9 +77,7 @@ export default function Auth({
           {state?.image && <p className="text-red-500">{state.image}</p>}
         </div>
       )}
-      <div className="flex justify-between">
-        <Button type="submit">{mode === "login" ? "Login" : "Singup"}</Button>
-      </div>
+      <FormButton mode={mode} />
       {state.login && <p className="text-red-500">{state.login}</p>}
       {mode === "login" && (
         <Link href="/auth/login/?mode=signup">
@@ -91,5 +90,16 @@ export default function Auth({
         </Link>
       )}
     </form>
+  );
+}
+
+function FormButton({ mode }: { mode: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <div className="flex justify-between">
+      <Button type="submit" disabled={pending}>
+        {pending ? "Submitting..." : mode === "login" ? "Login" : "Singup"}
+      </Button>
+    </div>
   );
 }

@@ -8,6 +8,7 @@ type PropsType = {
   type?: "button" | "submit" | "reset";
   size?: "small" | "medium" | "large";
   model?: "primary" | "secondary" | "danger";
+  disabled?: boolean;
 };
 
 const buttonStyle = {
@@ -26,12 +27,14 @@ export default function Button({
   type = "button",
   size = "medium",
   model = "primary",
+  disabled,
 }: PropsType) {
   return (
     <button
       onClick={onClick}
       type={type}
       className={`${buttonStyle.common} ${buttonStyle[size]} ${buttonStyle[model]}`}
+      disabled={disabled}
     >
       {children}
     </button>
