@@ -8,8 +8,12 @@ import {
   changeName,
   changePassword,
   createUser,
+  createUserSupabse,
   getUserByEmail,
   getUserById,
+  getUserSupabase,
+  loginSupabse,
+  logoutSupabse,
 } from "./user";
 import { hashPassword, verifyPassword } from "./hash";
 import { createAuthSession, deleteSession } from "./auth";
@@ -38,53 +42,64 @@ export async function signup({
   name,
   image,
 }: AuthCredentialsType) {
-  const hashedPassword = hashPassword(password);
+  // const hashedPassword = hashPassword(password);
 
   if (!email || !password || !name || !image)
     return {
       error: "Cannot signup. Please check your credantials.",
     };
 
-  const userId = createUser(email, hashedPassword, name, image);
+  // const userId = createUser(email, hashedPassword, name, image);
+  try {
+    const user = await createUserSupabse({ email, password, name, image });
+    return user;
+  } catch (error) {
+    throw new Error("Could not create account. Please try again.");
+  }
 
-  const id = userId.toString();
+  // const id = userId.toString();
 
-  await createAuthSession(id);
+  // await createAuthSession(id);
 }
 
 export async function login({ email, password }: AuthCredentialsType) {
-  const user = getUserByEmail(email);
+  // const user = getUserByEmail(email);
 
-  if (!user) {
-    return {
-      error: "Could not login. Plase check your credentials.",
-    };
+  try {
+    const user = await loginSupabse(email, password);
+    return user;
+  } catch (error) {
+    throw new Error("Could not login.");
   }
+  // const isPasswordValid = verifyPassword(user.password, password);
 
-  const isPasswordValid = verifyPassword(user.password, password);
+  // if (!isPasswordValid) {
+  //   return {
+  //     error: "Could not login. Plase check your credentials.",
+  //   };
+  // }
 
-  if (!isPasswordValid) {
-    return {
-      error: "Could not login. Plase check your credentials.",
-    };
-  }
-
-  await createAuthSession(user.id.toString());
+  // await createAuthSession(user.id.toString());
 }
 
 export async function logout() {
-  await deleteSession();
+  try {
+    await logoutSupabse();
+  } catch (error) {
+    throw new Error("Could not logging out. Please try again later.");
+  }
 }
 
-export async function getUser(id: number) {
-  return getUserById(id);
+export async function getUser(id: string) {
+  const user = await getUserSupabase(id);
+  return user;
 }
 
 //UPDATE USER
-export async function updateImageById(imageUrl: string, id: number) {
+export async function updateImageById(imageUrl: string, id: string) {
   const user = await getUser(id);
 
-  if (!user.id) return;
+  if (!user?.id) return;
 
   const publicId = "kanban" + user.image.split("/kanban")[1].split(".")[0];
 
@@ -96,6 +111,7 @@ export async function updateImageById(imageUrl: string, id: number) {
   revalidatePath("/");
   return res;
 }
+
 export async function updateNameById(name: string, id: number) {
   const res = changeName(name, id);
   revalidatePath("/");

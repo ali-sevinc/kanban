@@ -6,6 +6,7 @@ import { Kanit } from "next/font/google";
 import "./globals.css";
 import Provider from "@/utils/Provider";
 import HomeHeader from "@/components/HomeHeader";
+import UserProvider from "@/context/user-context";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -22,10 +23,12 @@ export default function layout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className={kanit.className}>
         <Provider>
-          <div className="h-screen bg-zinc-800 text-zinc-50">
-            <HomeHeader />
-            <div>{children}</div>
-          </div>
+          <UserProvider>
+            <div className="h-screen bg-zinc-800 text-zinc-50">
+              <HomeHeader />
+              <div>{children}</div>
+            </div>
+          </UserProvider>
         </Provider>
       </body>
     </html>

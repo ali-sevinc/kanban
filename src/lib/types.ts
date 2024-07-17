@@ -1,4 +1,4 @@
-import { Session, User } from "lucia";
+import { Session, User } from "@supabase/supabase-js";
 
 export type ProgressType = "todo" | "doing" | "done";
 export type TaskType = {
@@ -26,10 +26,7 @@ export type UserVerifyType =
       user: User;
       session: Session;
     }
-  | {
-      user: null;
-      session: null;
-    };
+  | undefined;
 
 export type ArchiveType = {
   id: number;
@@ -46,4 +43,8 @@ export type AuthFormState = {
   name?: string;
   image?: string;
   login?: string;
+  user?: {
+    user: User;
+    session: Session;
+  };
 };

@@ -1,26 +1,25 @@
 "use client";
 import Link from "next/link";
-import { User } from "lucia";
 import { redirect } from "next/navigation";
 
 import Button from "./Button";
 import { useFormState, useFormStatus } from "react-dom";
 import { AuthFormState } from "@/lib/types";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { useUserContext } from "@/context/user-context";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
 
 export default function Auth({
   mode,
-  user,
   authAction,
 }: {
   mode: "login" | "signup";
-  user: User | null;
   authAction: (prev: {}, formData: FormData) => Promise<AuthFormState>;
 }) {
   const [state, formAction] = useFormState(authAction, {} as AuthFormState);
+  const { user } = useUserContext();
 
   if (user) redirect("/boards");
 
