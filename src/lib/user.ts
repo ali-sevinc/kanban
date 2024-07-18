@@ -2,29 +2,29 @@ import db from "./db";
 import { UserType } from "./types";
 import supabase from "./supabase";
 
-export function createUser(
-  email: string,
-  password: string,
-  name: string,
-  image: string
-) {
-  const res = db
-    .prepare(
-      "INSERT INTO users (email, password, name, image) VALUES (?, ?, ?, ?)"
-    )
-    .run(email, password, name, image);
-  return res.lastInsertRowid;
-}
+// export function createUser(
+//   email: string,
+//   password: string,
+//   name: string,
+//   image: string
+// ) {
+//   const res = db
+//     .prepare(
+//       "INSERT INTO users (email, password, name, image) VALUES (?, ?, ?, ?)"
+//     )
+//     .run(email, password, name, image);
+//   return res.lastInsertRowid;
+// }
 
-export function getUserByEmail(email: string) {
-  return db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email) as UserType;
-}
+// export function getUserByEmail(email: string) {
+//   return db
+//     .prepare("SELECT * FROM users WHERE email = ?")
+//     .get(email) as UserType;
+// }
 
-export function getUserById(id: number) {
-  return db.prepare("SELECT * FROM users WHERE id = ?").get(id) as UserType;
-}
+// export function getUserById(id: number) {
+//   return db.prepare("SELECT * FROM users WHERE id = ?").get(id) as UserType;
+// }
 
 export function changeImage(image: string, id: number) {
   return db.prepare("UPDATE users SET image = ? WHERE id = ?").run(image, id);
@@ -37,6 +37,8 @@ export function changePassword(password: string, id: number) {
     .prepare("UPDATE users SET password = ? WHERE id = ?")
     .run(password, id);
 }
+
+/* ****************************************************************** */
 
 export async function createUserSupabse(userData: {
   email: string;
@@ -83,12 +85,20 @@ export async function logoutSupabse() {
   if (error) throw new Error(error.message);
 }
 
-export async function getUserSupabase(id: string) {
+export async function getUser() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+}
+
+export async function getUserSupabase() {
+  const loggedUser = await getUser();
   try {
     let { data: user, error } = await supabase
       .from("users")
       .select("*")
-      .eq("user_id", id);
+      .eq("user_id", loggedUser?.id);
     if (error) throw new Error(error.message);
     return user as {
       name: string;

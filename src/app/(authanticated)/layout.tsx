@@ -26,18 +26,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await verifyAuth();
-  if (!user.user) redirect("/auth/login");
-  const userDetails = await getUser(+user.user?.id);
-
   return (
     <html lang="en">
       <body className={kanit.className}>
         <Provider>
           <UserProvider>
             <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
-              <Header user={user} userDetails={userDetails} />
-              <Sidebar user={user} />
+              <Header />
+              <Sidebar />
               <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
                 {children}
               </main>

@@ -9,10 +9,12 @@ import { getBoardByUserId } from "@/lib/actions";
 
 import SideMenuItem from "./SideMenuItem";
 import NewBoard from "./NewBoard";
+import { useUserContext } from "@/context/user-context";
 
-export default function Sidebar({ user }: { user: UserVerifyType }) {
+export default function Sidebar() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const queryClient = useQueryClient();
+  const { user } = useUserContext();
 
   // console.log(user);
   // console.log(boards);
@@ -29,7 +31,7 @@ export default function Sidebar({ user }: { user: UserVerifyType }) {
       }
       fetchBoards();
     },
-    [user.user, queryClient]
+    [user, queryClient]
   );
 
   return (

@@ -7,16 +7,12 @@ import {
   changeImage,
   changeName,
   changePassword,
-  createUser,
   createUserSupabse,
-  getUserByEmail,
-  getUserById,
   getUserSupabase,
   loginSupabse,
   logoutSupabse,
 } from "./user";
-import { hashPassword, verifyPassword } from "./hash";
-import { createAuthSession, deleteSession } from "./auth";
+import { hashPassword } from "./hash";
 
 import { ArchiveType, BoardType, ProgressType, TaskType } from "./types";
 import { createNewBoard, deleteBoardById, getBoards } from "./board";
@@ -56,30 +52,15 @@ export async function signup({
   } catch (error) {
     throw new Error("Could not create account. Please try again.");
   }
-
-  // const id = userId.toString();
-
-  // await createAuthSession(id);
 }
 
 export async function login({ email, password }: AuthCredentialsType) {
-  // const user = getUserByEmail(email);
-
   try {
     const user = await loginSupabse(email, password);
     return user;
   } catch (error) {
     throw new Error("Could not login.");
   }
-  // const isPasswordValid = verifyPassword(user.password, password);
-
-  // if (!isPasswordValid) {
-  //   return {
-  //     error: "Could not login. Plase check your credentials.",
-  //   };
-  // }
-
-  // await createAuthSession(user.id.toString());
 }
 
 export async function logout() {
@@ -90,14 +71,14 @@ export async function logout() {
   }
 }
 
-export async function getUser(id: string) {
-  const user = await getUserSupabase(id);
+export async function getUser() {
+  const user = await getUserSupabase();
   return user;
 }
 
 //UPDATE USER
-export async function updateImageById(imageUrl: string, id: string) {
-  const user = await getUser(id);
+export async function updateImageById(imageUrl: string) {
+  const user = await getUser();
 
   if (!user?.id) return;
 
@@ -107,7 +88,7 @@ export async function updateImageById(imageUrl: string, id: string) {
 
   await deleteImage(publicId);
 
-  const res = changeImage(imageUrl, id);
+  const res = changeImage(imageUrl, user.id);
   revalidatePath("/");
   return res;
 }

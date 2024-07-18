@@ -13,24 +13,33 @@ import {
   updateTask,
 } from "@/lib/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useUserContext } from "@/context/user-context";
+import { redirect } from "next/navigation";
 
-type PropsType = { slug: string; user: UserVerifyType; taskItems: TaskType[] };
+type PropsType = { slug: string };
 
-export default function Board({ slug, user, taskItems }: PropsType) {
+export default function Board({ slug }: PropsType) {
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const { user } = useUserContext();
 
   const queryCliet = useQueryClient();
 
   const { data: fetchedBoards } = useQuery({
     queryKey: ["boards"],
-    queryFn: () => getBoardByUserId(user.user?.id || ""),
+    queryFn: () => getBoardByUserId(user?.user?.id || ""),
   });
   let boards: BoardType[] = [];
   if (fetchedBoards) {
     boards = fetchedBoards;
   }
+
+  const { data: taskItems } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: () => getTasks(board?.id.toString() || ""),
+  });
 
   const board = boards?.find((board) => board.slug === slug);
   const boardId = board?.id!;
@@ -52,6 +61,10 @@ export default function Board({ slug, user, taskItems }: PropsType) {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
+
+  if (!user?.user || !user?.session) {
+    return redirect("/auth/login");
+  }
 
   const tasks: { title: "todo" | "doing" | "done"; task: TaskType[] }[] = [
     {
@@ -115,7 +128,7 @@ export default function Board({ slug, user, taskItems }: PropsType) {
     progress: ProgressType;
   }) {
     const board_name = board?.title;
-    const user_id = user.user?.id;
+    const user_id = user?.user?.id;
     if (!board_name || !user_id) return;
     const data = { title, body, progress, board_name, user_id };
     const res = await createArchive(data);

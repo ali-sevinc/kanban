@@ -1,7 +1,13 @@
 "use client";
 
 import { Session, User } from "@supabase/supabase-js";
-import { ReactNode, createContext, useContext, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type InitialType = {
   user: null | { user: User; session: Session };
@@ -28,6 +34,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   function handleLogout() {
     setUser(null);
   }
+  useEffect(function () {}, []);
 
   return (
     <UserContext.Provider value={{ user, handleLogin, handleLogout }}>

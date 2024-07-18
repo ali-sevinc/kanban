@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 
 import { BoardType, UserType, UserVerifyType } from "@/lib/types";
@@ -13,33 +13,34 @@ import NewTodo from "./NewTodo";
 import Link from "next/link";
 import MenuProvider from "./Menu";
 import { HiArchive, HiLogout, HiUser } from "react-icons/hi";
+import { useUserContext } from "@/context/user-context";
 
-export default function Header({
-  user,
-  userDetails,
-}: {
-  user: UserVerifyType;
-  userDetails: UserType;
-}) {
+export default function Header() {
   const pathName = usePathname();
   const router = useRouter();
   const [showNewTodo, setShowNewTodo] = useState(false);
   const [boards, setBoards] = useState<BoardType[] | undefined>([]);
+  const { user } = useUserContext();
 
-  const [loggedUser, setLoggedUser] = useState<UserType | null>(null);
+  const [loggedUser, setLoggedUser] = useState<{
+    name: string;
+    user_id: string;
+    image: string;
+    id: number;
+  } | null>(null);
 
   useEffect(
     function () {
       async function fetchBoards() {
-        if (!user.user) return;
-        const logged = await getUser(+user.user.id);
+        if (!user?.user) return;
+        const logged = await getUser(user.user.id);
         const res = await getBoardByUserId(user.user?.id);
         setLoggedUser(logged);
         setBoards(res);
       }
       fetchBoards();
     },
-    [user.user]
+    [user?.user]
   );
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
@@ -53,14 +54,16 @@ export default function Header({
   if (pathName === "/archive") displayName = "Archive";
   if (pathName === "/profile") displayName = "Profile";
 
+  if (!user?.user || !user?.session) redirect("/auth/login");
+
   return (
     <>
       <header className="h-24 text-zinc-50 flex items-center justify-between px-12 border-b">
         <h2 className="uppercase">{displayName}</h2>
         <div className="flex gap-4">
           {pathName !== "/" &&
-            user.user &&
-            user.session &&
+            user?.user &&
+            user?.session &&
             pathName !== "/boards" &&
             pathName !== "/archive" &&
             pathName !== "/profile" && (
@@ -68,15 +71,15 @@ export default function Header({
                 +New Task
               </TextButton>
             )}
-          {!user.user && !user.session ? (
+          {!user?.user && !user?.session ? (
             <Link href="/auth/login">Login</Link>
           ) : (
             <MenuProvider>
               <MenuProvider.Toggle openName="profile">
                 <img
-                  src={userDetails.image}
+                  src={loggedUser?.image}
                   className="w-14 h-14 rounded-full p-1 border-2 object-cover"
-                  alt={`${userDetails.name} profile picture.`}
+                  alt={`${loggedUser?.name} profile picture.`}
                 />
               </MenuProvider.Toggle>
               <MenuProvider.List openName="profile">

@@ -15,26 +15,11 @@ export default async function BoardPage({
 }: {
   params: { board: string };
 }) {
-  const user = await verifyAuth();
-  if (!user.user || !user.session) {
-    return redirect("/auth/login");
-  }
-
-  const boards = (await getBoardByUserId(user.user.id)) as BoardType[];
-  const board = boards?.find((board) => board.slug === params.board)!;
-
-  // console.log("BOARD PAGE", board);
-  const taskItems = await getTasks(board?.id.toString());
-
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["tasks"],
-    queryFn: () => getTasks(board?.id.toString()),
-  });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Board slug={params.board} user={user} taskItems={taskItems} />
+      <Board slug={params.board} />
     </HydrationBoundary>
   );
 }
