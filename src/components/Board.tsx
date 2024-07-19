@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { BoardType, ProgressType, TaskType, UserVerifyType } from "@/lib/types";
 
@@ -23,26 +23,28 @@ export default function Board({ slug }: PropsType) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { user } = useUserContext();
+  const { user, handleLogin } = useUserContext();
 
   const queryCliet = useQueryClient();
 
+  useEffect(function () {}, []);
+
   const { data: fetchedBoards } = useQuery({
     queryKey: ["boards"],
-    queryFn: () => getBoardByUserId(user?.user?.id || ""),
+    queryFn: () => getBoardByUserId(),
   });
   let boards: BoardType[] = [];
   if (fetchedBoards) {
     boards = fetchedBoards;
   }
 
-  const { data: taskItems } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: () => getTasks(board?.id.toString() || ""),
-  });
-
   const board = boards?.find((board) => board.slug === slug);
   const boardId = board?.id!;
+
+  const { data: taskItems } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: () => getTasks(boardId),
+  });
 
   // const { mutate: deleteMutation } = useMutation({
   //   mutationFn: ({ id }: { id: number }) => deleteTask(id),
@@ -62,7 +64,7 @@ export default function Board({ slug }: PropsType) {
     },
   });
 
-  if (!user?.user || !user?.session) {
+  if (!user?.id) {
     return redirect("/auth/login");
   }
 
@@ -128,7 +130,7 @@ export default function Board({ slug }: PropsType) {
     progress: ProgressType;
   }) {
     const board_name = board?.title;
-    const user_id = user?.user?.id;
+    const user_id = user?.id;
     if (!board_name || !user_id) return;
     const data = { title, body, progress, board_name, user_id };
     const res = await createArchive(data);

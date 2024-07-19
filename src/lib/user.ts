@@ -26,17 +26,17 @@ import supabase from "./supabase";
 //   return db.prepare("SELECT * FROM users WHERE id = ?").get(id) as UserType;
 // }
 
-export function changeImage(image: string, id: number) {
-  return db.prepare("UPDATE users SET image = ? WHERE id = ?").run(image, id);
-}
-export function changeName(name: string, id: number) {
-  return db.prepare("UPDATE users SET name = ? WHERE id = ?").run(name, id);
-}
-export function changePassword(password: string, id: number) {
-  return db
-    .prepare("UPDATE users SET password = ? WHERE id = ?")
-    .run(password, id);
-}
+// export function changeImage(image: string, id: number) {
+//   return db.prepare("UPDATE users SET image = ? WHERE id = ?").run(image, id);
+// }
+// export function changeName(name: string, id: number) {
+//   return db.prepare("UPDATE users SET name = ? WHERE id = ?").run(name, id);
+// }
+// export function changePassword(password: string, id: number) {
+//   return db
+//     .prepare("UPDATE users SET password = ? WHERE id = ?")
+//     .run(password, id);
+// }
 
 /* ****************************************************************** */
 
@@ -108,5 +108,54 @@ export async function getUserSupabase() {
     } | null;
   } catch (error) {
     throw new Error("Could not get user.");
+  }
+}
+export async function changeImageSupabase(image: string) {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user?.id) throw new Error("User not found.");
+
+    const { data, error } = await supabase
+      .from("users")
+      .update({ image })
+      .eq("user_id", user.id)
+      .select();
+    if (error) throw new Error("Failed to update image.");
+  } catch (error) {
+    console.error(error);
+  }
+}
+export async function changeNameSupabase(newName: string) {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user?.id) throw new Error("User not found.");
+
+    const { data, error } = await supabase
+      .from("users")
+      .update({ name: newName })
+      .eq("user_id", user.id)
+      .select();
+    if (error) throw new Error("Failed to update image.");
+  } catch (error) {
+    console.error(error);
+  }
+}
+export async function changePasswordSupabase(newPassword: string) {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user?.id) throw new Error("User not found.");
+
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+    if (error) throw new Error("Failed to change password.");
+  } catch (error) {
+    console.error(error);
   }
 }

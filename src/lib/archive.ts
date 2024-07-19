@@ -1,35 +1,80 @@
-import db from "./db";
+// import db from "./db";
+import supabase from "./supabase";
 
 type AddType = {
   title: string;
   body: string;
   progress: "todo" | "doing" | "done";
   board_name: string;
-  user_id: string;
 };
-export function addToArchive({
-  title,
+
+// export function addToArchive({
+//   title,
+//   body,
+//   progress,
+//   board_name,
+//   user_id,
+// }: AddType) {
+//   const res = db
+//     .prepare(
+//       "INSERT INTO archive (title, body, progress, board_name, user_id) VALUES (?, ?, ?, ?, ?)"
+//     )
+//     .run(title, body, progress, board_name, user_id);
+
+//   return res;
+// }
+
+// export function getArchiveByUserId(user_id: string) {
+//   const res = db
+//     .prepare("SELECT * FROM archive WHERE user_id = ?")
+//     .all(user_id);
+//   return res;
+// }
+
+// export function deleteArchiveById(id: number) {
+//   db.prepare("DELETE FROM archive WHERE id = ?").run(id);
+// }
+
+export async function addToArchiveSupabase({
+  board_name,
   body,
   progress,
-  board_name,
-  user_id,
+  title,
 }: AddType) {
-  const res = db
-    .prepare(
-      "INSERT INTO archive (title, body, progress, board_name, user_id) VALUES (?, ?, ?, ?, ?)"
-    )
-    .run(title, body, progress, board_name, user_id);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return res;
+  try {
+    if (!user?.id) throw new Error("User not found.");
+
+    const { data, error } = await supabase
+      .from("archive")
+      .insert([{ title, body, progress, board_name, user_id: user.id }])
+      .select();
+    if (error) throw new Error("The task could not archived.");
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 }
+export async function getArchiveSupabase() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  try {
+    if (!user?.id) throw new Error("User not found.");
+    let { data, error } = await supabase
+      .from("archive")
+      .select("*")
+      .eq("user_id", user.id);
 
-export function getArchiveByUserId(user_id: string) {
-  const res = db
-    .prepare("SELECT * FROM archive WHERE user_id = ?")
-    .all(user_id);
-  return res;
+    if (error) throw new Error("Could not delete.");
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 }
-
-export function deleteArchiveById(id: number) {
-  db.prepare("DELETE FROM archive WHERE id = ?").run(id);
+export async function deleteArchiveSupabase(id: number) {
+  const { error } = await supabase.from("archive").delete().eq("id", id);
 }

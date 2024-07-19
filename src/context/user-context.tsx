@@ -1,17 +1,24 @@
 "use client";
 
-import { Session, User } from "@supabase/supabase-js";
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
 } from "react";
 
+type User = {
+  name: string;
+  user_id: string;
+  image: string;
+  id: number;
+} | null;
+
 type InitialType = {
-  user: null | { user: User; session: Session };
-  handleLogin: (data: { user: User; session: Session }) => void;
+  user: User;
+  handleLogin: (data: User) => void;
   handleLogout: () => void;
 };
 
@@ -24,13 +31,11 @@ const initialState: InitialType = {
 const UserContext = createContext(initialState);
 
 export default function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<{ user: User; session: Session } | null>(
-    null
-  );
+  const [user, setUser] = useState<User>(null);
 
-  function handleLogin(userInfo: { user: User; session: Session }) {
+  const handleLogin = useCallback(function (userInfo: User) {
     setUser(userInfo);
-  }
+  }, []);
   function handleLogout() {
     setUser(null);
   }

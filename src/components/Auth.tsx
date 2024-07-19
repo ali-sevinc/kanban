@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import Button from "./Button";
 import { useFormState, useFormStatus } from "react-dom";
 import { AuthFormState } from "@/lib/types";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useUserContext } from "@/context/user-context";
+import { getUser } from "@/lib/actions";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
@@ -19,7 +20,18 @@ export default function Auth({
   authAction: (prev: {}, formData: FormData) => Promise<AuthFormState>;
 }) {
   const [state, formAction] = useFormState(authAction, {} as AuthFormState);
-  const { user } = useUserContext();
+  const { user, handleLogin } = useUserContext();
+
+  useEffect(
+    function () {
+      async function fetchUser() {
+        const fetchedUser = await getUser();
+        handleLogin(fetchedUser);
+      }
+      fetchUser();
+    },
+    [handleLogin]
+  );
 
   if (user) redirect("/boards");
 
