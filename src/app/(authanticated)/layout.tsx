@@ -6,7 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import Provider from "@/utils/Provider";
 
 import "./globals.css";
-import { verifyAuth } from "@/lib/auth";
+// import { verifyAuth } from "@/lib/auth";
 import { getUser } from "@/lib/actions";
 import { redirect } from "next/navigation";
 import UserProvider from "@/context/user-context";

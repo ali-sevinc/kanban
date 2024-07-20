@@ -10,15 +10,16 @@ import {
   deleteTask,
   getBoardByUserId,
   getTasks,
+  getUser,
   updateTask,
 } from "@/lib/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "@/context/user-context";
 import { redirect } from "next/navigation";
 
-type PropsType = { slug: string };
+type PropsType = { slug: string; isLogin: boolean };
 
-export default function Board({ slug }: PropsType) {
+export default function Board({ slug, isLogin }: PropsType) {
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +27,6 @@ export default function Board({ slug }: PropsType) {
   const { user, handleLogin } = useUserContext();
 
   const queryCliet = useQueryClient();
-
-  useEffect(function () {}, []);
 
   const { data: fetchedBoards } = useQuery({
     queryKey: ["boards"],
@@ -64,7 +63,7 @@ export default function Board({ slug }: PropsType) {
     },
   });
 
-  if (!user?.id) {
+  if (!isLogin) {
     return redirect("/auth/login");
   }
 

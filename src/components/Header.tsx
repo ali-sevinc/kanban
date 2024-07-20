@@ -32,15 +32,15 @@ export default function Header() {
   useEffect(
     function () {
       async function fetchBoards() {
-        if (!user?.user) return;
-        const logged = await getUser(user.user.id);
-        const res = await getBoardByUserId(user.user?.id);
+        if (!user) return;
+        const logged = await getUser();
+        const res = await getBoardByUserId();
         setLoggedUser(logged);
         setBoards(res);
       }
       fetchBoards();
     },
-    [user?.user]
+    [user]
   );
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
@@ -54,7 +54,7 @@ export default function Header() {
   if (pathName === "/archive") displayName = "Archive";
   if (pathName === "/profile") displayName = "Profile";
 
-  if (!user?.user || !user?.session) redirect("/auth/login");
+  if (!user) redirect("/auth/login");
 
   return (
     <>
@@ -62,8 +62,7 @@ export default function Header() {
         <h2 className="uppercase">{displayName}</h2>
         <div className="flex gap-4">
           {pathName !== "/" &&
-            user?.user &&
-            user?.session &&
+            user &&
             pathName !== "/boards" &&
             pathName !== "/archive" &&
             pathName !== "/profile" && (
@@ -71,7 +70,7 @@ export default function Header() {
                 +New Task
               </TextButton>
             )}
-          {!user?.user && !user?.session ? (
+          {!user ? (
             <Link href="/auth/login">Login</Link>
           ) : (
             <MenuProvider>

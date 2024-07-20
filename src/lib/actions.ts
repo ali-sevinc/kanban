@@ -114,7 +114,7 @@ export async function updateImageById(imageUrl: string) {
   return res;
 }
 
-export async function updateNameById(name: string, id: number) {
+export async function updateNameById(name: string) {
   // const res = changeName(name, id);
   const res = await changeNameSupabase(name);
   revalidatePath("/");

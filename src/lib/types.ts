@@ -15,12 +15,11 @@ export type BoardType = {
   user_id: string;
 };
 export type UserType = {
-  email: string;
-  password: string;
-  id: number;
   name: string;
+  user_id: string;
   image: string;
-};
+  id: number;
+} | null;
 export type UserVerifyType =
   | {
       user: User;

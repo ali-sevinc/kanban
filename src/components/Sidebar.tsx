@@ -22,9 +22,9 @@ export default function Sidebar() {
   useEffect(
     function () {
       async function fetchBoards() {
-        if (!user?.user?.id) return;
+        if (!user) return;
 
-        const data = (await getBoardByUserId(user.user.id)) as BoardType[];
+        const data = (await getBoardByUserId()) as BoardType[];
         setBoards(data);
 
         queryClient.setQueryData(["boards"], data);
@@ -65,7 +65,7 @@ export default function Sidebar() {
               </nav>
             )}
             <div className="p-4">
-              <NewBoard boards={boards} user={user} />
+              <NewBoard boards={boards} />
             </div>
           </>
         )}

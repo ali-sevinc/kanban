@@ -5,16 +5,19 @@ import {
   updateNameById,
   updatePasswordById,
 } from "@/lib/actions";
-import { verifyAuth } from "@/lib/auth";
+// import { verifyAuth } from "@/lib/auth";
 import { uploadImage } from "@/lib/cloudinary";
 import { verifyPassword } from "@/lib/hash";
+import supabase from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
-  const isAuth = await verifyAuth();
-  if (!isAuth.user || !isAuth.session) redirect("/auth/login");
-
-  const user = await getUser(+isAuth.user.id);
+  const {
+    data: { user: isAuth },
+  } = await supabase.auth.getUser();
+  if (!isAuth) {
+    return redirect("/auth/login");
+  }
 
   async function updateImage(prevState: {}, formData: FormData) {
     "use server";
@@ -23,7 +26,7 @@ export default async function ProfilePage() {
 
     const imageUrl = await uploadImage(image);
     if (!imageUrl) return {};
-    const res = await updateImageById(imageUrl, user.id);
+    const res = await updateImageById(imageUrl);
 
     return {};
   }
@@ -33,7 +36,7 @@ export default async function ProfilePage() {
     const name = formData?.get("new-name") as string;
     if (name.trim().length < 3) return { error: "Name is Required." };
 
-    const res = await updateNameById(name, user.id);
+    const res = await updateNameById(name);
 
     return {};
   }
@@ -42,25 +45,24 @@ export default async function ProfilePage() {
     "use server";
     const currentPas = formData?.get("current-password") as string;
     const newPas = formData?.get("new-password") as string;
-    const validOldPassword = verifyPassword(user.password, currentPas);
+    // const validOldPassword = verifyPassword(user.password, currentPas);
 
-    if (!validOldPassword)
-      return {
-        currentError: "Wrong password.",
-      };
-    if (newPas.trim().length < 3)
-      return {
-        newError: "Please enter a valid password.",
-      };
+    // if (!validOldPassword)
+    //   return {
+    //     currentError: "Wrong password.",
+    //   };
+    // if (newPas.trim().length < 3)
+    //   return {
+    //     newError: "Please enter a valid password.",
+    //   };
 
-    await updatePasswordById(newPas, user.id);
+    // await updatePasswordById(newPas, user.id);
 
     return {};
   }
 
   return (
     <Profile
-      user={user}
       updateImage={updateImage}
       updateName={updateName}
       updatePassword={updatePassword}

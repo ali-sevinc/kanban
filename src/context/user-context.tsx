@@ -1,5 +1,7 @@
 "use client";
 
+import { getUser } from "@/lib/actions";
+import supabase from "@/lib/supabase";
 import {
   ReactNode,
   createContext,
@@ -39,7 +41,22 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   function handleLogout() {
     setUser(null);
   }
-  useEffect(function () {}, []);
+
+  useEffect(
+    function () {
+      async function fetchLoggedUser() {
+        const {
+          data: { user: fetchedUser },
+        } = await supabase.auth.getUser();
+        if (fetchedUser) {
+          const loggedUserInfo = await getUser();
+          handleLogin(loggedUserInfo);
+        }
+      }
+      fetchLoggedUser();
+    },
+    [handleLogin]
+  );
 
   return (
     <UserContext.Provider value={{ user, handleLogin, handleLogout }}>

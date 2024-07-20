@@ -12,27 +12,16 @@ import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
 import Button from "./Button";
 import Modal from "./Modal";
+import { useUserContext } from "@/context/user-context";
 
-export default function NewBoard({
-  boards,
-  user,
-}: {
-  boards: BoardType[];
-  user: UserVerifyType;
-}) {
+export default function NewBoard({ boards }: { boards: BoardType[] }) {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useUserContext();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      title,
-      slug,
-      user_id,
-    }: {
-      title: string;
-      slug: string;
-      user_id: string;
-    }) => createBoard({ title, slug, user_id }),
+    mutationFn: ({ title, slug }: { title: string; slug: string }) =>
+      createBoard({ title, slug }),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
@@ -56,7 +45,7 @@ export default function NewBoard({
       return;
     }
 
-    if (!user.user?.id) return;
+    if (!user?.id) return;
 
     const slug = slugify(title, { lower: true });
 
@@ -66,7 +55,7 @@ export default function NewBoard({
       return;
     }
 
-    mutate({ title, slug, user_id: user.user.id });
+    mutate({ title, slug });
 
     setShowForm(false);
   }

@@ -1,12 +1,15 @@
-import { verifyAuth } from "@/lib/auth";
+// import { verifyAuth } from "@/lib/auth";
 import { logout } from "@/lib/actions";
 import Link from "next/link";
+import supabase from "@/lib/supabase";
 
 export default async function HomeHeader() {
-  const res = await verifyAuth();
+  const {
+    data: { user: res },
+  } = await supabase.auth.getUser();
 
   let isAuth = false;
-  if (res.session && res.user) isAuth = true;
+  if (res) isAuth = true;
 
   return (
     <header className="w-[60%] mx-auto flex justify-between py-4 text-xl">

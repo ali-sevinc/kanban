@@ -36,7 +36,7 @@ export default function NewTodo({ board, onClose }: PropsType) {
       progress: "todo" as ProgressType,
       title,
       body,
-      board_id: board.id.toString(),
+      board_id: board.id,
     };
 
     // console.log(data);

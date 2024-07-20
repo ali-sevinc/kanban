@@ -1,13 +1,13 @@
 "use client";
-import { UserType } from "@/lib/types";
+
 import { useState } from "react";
 import Modal from "./Modal";
 import { AnimatePresence } from "framer-motion";
 import { useFormState } from "react-dom";
 import Button from "./Button";
+import { useUserContext } from "@/context/user-context";
 
 type PropsType = {
-  user: UserType;
   updateImage: (
     prevState: {},
     formData: FormData
@@ -22,7 +22,6 @@ type PropsType = {
   ) => Promise<{ currentError?: string; newError?: string }>;
 };
 export default function Profile({
-  user,
   updateImage,
   updateName,
   updatePassword,
@@ -30,6 +29,7 @@ export default function Profile({
   const [showImageForm, setShowImageForm] = useState(false);
   const [showNameForm, setShowNameForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const { user } = useUserContext();
 
   async function handleImage(prevState: {}, formData: FormData) {
     const data = await updateImage(prevState, formData);
@@ -68,14 +68,14 @@ export default function Profile({
           className="w-44 h-44 rounded-full"
         >
           <img
-            src={user.image}
+            src={user?.image}
             className="rounded-full object-cover w-full h-full"
-            alt={`${user.name} profile picture.`}
+            alt={`${user?.name} profile picture.`}
           />
         </button>
 
         <div className="flex items-center justify-between w-full">
-          <p>{user.name}</p>
+          <p>{user?.name}</p>
           <button onClick={() => setShowNameForm(true)}>Change Name</button>
         </div>
         <div className="w-full text-center flex items-center justify-between">
