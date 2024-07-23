@@ -8,8 +8,9 @@ import { AuthFormState } from "@/lib/types";
 import { ReactNode, useEffect, useState } from "react";
 import { useUserContext } from "@/context/user-context";
 import { getUser } from "@/lib/actions";
-import supabase from "@/lib/supabase";
+// import supabase from "@/lib/supabase";
 import { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/client";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
@@ -22,7 +23,26 @@ export default function Auth({
   authAction: (prev: {}, formData: FormData) => Promise<AuthFormState>;
 }) {
   const [state, formAction] = useFormState(authAction, {} as AuthFormState);
-  const { user } = useUserContext();
+  const { user, handleLogin } = useUserContext();
+  const supabase = createClient();
+
+  useEffect(
+    function () {
+      async function fetchLoggedUser() {
+        const {
+          data: { user: fetchedUser },
+        } = await supabase.auth.getUser();
+        console.log(fetchedUser);
+        if (fetchedUser) {
+          const loggedUserInfo = await getUser();
+          console.log("[LOGIN SUPABASE FUNCTİON]", loggedUserInfo);
+          handleLogin(loggedUserInfo);
+        }
+      }
+      fetchLoggedUser();
+    },
+    [handleLogin, state, supabase]
+  );
 
   if (user) redirect("/boards");
 

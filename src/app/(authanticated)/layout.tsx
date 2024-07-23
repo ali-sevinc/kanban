@@ -3,7 +3,7 @@ import { Kanit } from "next/font/google";
 
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import Provider from "@/utils/Provider";
+// import Provider from "@/utils/Provider";
 
 import "./globals.css";
 // import { verifyAuth } from "@/lib/auth";
@@ -29,17 +29,17 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={kanit.className}>
-        <Provider>
-          <UserProvider>
-            <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
-              <Header />
-              <Sidebar />
-              <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
-                {children}
-              </main>
-            </div>
-          </UserProvider>
-        </Provider>
+        {/* <Provider> */}
+        <UserProvider>
+          <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
+            <Header />
+            <Sidebar />
+            <main className="overflow-y-scroll flex-grow px-4 py-2 text-zinc-50">
+              {children}
+            </main>
+          </div>
+        </UserProvider>
+        {/* </Provider> */}
       </body>
     </html>
   );

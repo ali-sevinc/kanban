@@ -15,7 +15,7 @@ import {
   loginSupabse,
   logoutSupabse,
 } from "./user";
-import { hashPassword } from "./hash";
+// import { hashPassword } from "./hash";
 
 import { ArchiveType, BoardType, ProgressType, TaskType } from "./types";
 import {
@@ -74,10 +74,14 @@ export async function signup({
 }
 
 export async function login({ email, password }: AuthCredentialsType) {
+  console.log("[LOGIN FUNCTION]");
   try {
     const user = await loginSupabse(email, password);
+    console.log("[LOGIN FUNCTION]", user);
     return user;
   } catch (error) {
+    console.log("[LOGIN FUNCTION ERROR]", error);
+
     throw new Error("Could not login.");
   }
 }

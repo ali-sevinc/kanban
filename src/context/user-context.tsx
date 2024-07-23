@@ -1,7 +1,8 @@
 "use client";
 
 import { getUser } from "@/lib/actions";
-import supabase from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
+// import supabase from "@/lib/supabase";
 import {
   ReactNode,
   createContext,
@@ -34,6 +35,7 @@ const UserContext = createContext(initialState);
 
 export default function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(null);
+  const supabase = createClient();
 
   const handleLogin = useCallback(function (userInfo: User) {
     setUser(userInfo);
@@ -55,7 +57,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
       }
       fetchLoggedUser();
     },
-    [handleLogin]
+    [handleLogin, supabase]
   );
 
   return (

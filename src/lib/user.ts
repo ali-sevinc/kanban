@@ -1,6 +1,7 @@
-import db from "./db";
+// import db from "./db";
 import { UserType } from "./types";
-import supabase from "./supabase";
+// import supabase from "./supabase";
+import { createClient } from "@/utils/supabase/server";
 
 // export function createUser(
 //   email: string,
@@ -46,6 +47,7 @@ export async function createUserSupabse(userData: {
   name?: string;
   image?: string;
 }) {
+  const supabase = createClient();
   const { data, error: createError } = await supabase.auth.signUp({
     email: userData.email,
     password: userData.password,
@@ -70,10 +72,13 @@ export async function createUserSupabse(userData: {
 }
 
 export async function loginSupabse(email: string, password: string) {
+  const supabase = createClient();
+
   let { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
+  console.log("[LOGIN SUPABASE]", data);
 
   if (error) throw new Error(error.message);
 
@@ -81,11 +86,13 @@ export async function loginSupabse(email: string, password: string) {
 }
 
 export async function logoutSupabse() {
+  const supabase = createClient();
   let { error } = await supabase.auth.signOut();
   if (error) throw new Error(error.message);
 }
 
 export async function getUser() {
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -93,6 +100,7 @@ export async function getUser() {
 }
 
 export async function getUserSupabase() {
+  const supabase = createClient();
   const loggedUser = await getUser();
   try {
     let { data: user, error } = await supabase
@@ -111,6 +119,7 @@ export async function getUserSupabase() {
   }
 }
 export async function changeImageSupabase(image: string) {
+  const supabase = createClient();
   try {
     const {
       data: { user },
@@ -128,6 +137,7 @@ export async function changeImageSupabase(image: string) {
   }
 }
 export async function changeNameSupabase(newName: string) {
+  const supabase = createClient();
   try {
     const {
       data: { user },
@@ -145,6 +155,7 @@ export async function changeNameSupabase(newName: string) {
   }
 }
 export async function changePasswordSupabase(newPassword: string) {
+  const supabase = createClient();
   try {
     const {
       data: { user },

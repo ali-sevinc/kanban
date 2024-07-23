@@ -1,15 +1,16 @@
+"use client";
 // import { verifyAuth } from "@/lib/auth";
 import { logout } from "@/lib/actions";
 import Link from "next/link";
 import supabase from "@/lib/supabase";
+import { useUserContext } from "@/context/user-context";
 
-export default async function HomeHeader() {
-  const {
-    data: { user: res },
-  } = await supabase.auth.getUser();
+export default function HomeHeader() {
+  const { user } = useUserContext();
 
   let isAuth = false;
-  if (res) isAuth = true;
+  if (user) isAuth = true;
+  // console.log("/HOME HEADER", user);
 
   return (
     <header className="w-[60%] mx-auto flex justify-between py-4 text-xl">
