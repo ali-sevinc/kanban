@@ -2,6 +2,8 @@ import Auth from "@/components/Auth";
 import { login, signup } from "@/lib/actions";
 import { deleteImage, uploadImage } from "@/lib/cloudinary";
 import { AuthFormState } from "@/lib/types";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function LoginPage({
   searchParams,
@@ -10,6 +12,11 @@ export default async function LoginPage({
 }) {
   let mode: "login" | "signup" = "login";
   if (searchParams.mode === "signup") mode = "signup";
+
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   async function authAction(prev: {}, formData: FormData) {
     "use server";
@@ -66,5 +73,7 @@ export default async function LoginPage({
     return errors;
   }
 
-  return <Auth mode={mode} authAction={authAction} />;
+  if (user) redirect("/boards");
+
+  return <Auth mode={mode} authAction={authAction} loggedUser={user} />;
 }

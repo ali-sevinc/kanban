@@ -78,7 +78,7 @@ export async function loginSupabse(email: string, password: string) {
     email,
     password,
   });
-  console.log("[LOGIN SUPABASE]", data);
+  // console.log("[LOGIN SUPABASE]", data);
 
   if (error) throw new Error(error.message);
 
@@ -101,7 +101,9 @@ export async function getUser() {
 
 export async function getUserSupabase() {
   const supabase = createClient();
-  const loggedUser = await getUser();
+  const {
+    data: { user: loggedUser },
+  } = await supabase.auth.getUser();
   try {
     let { data: user, error } = await supabase
       .from("users")

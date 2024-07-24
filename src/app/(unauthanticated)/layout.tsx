@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Kanit } from "next/font/google";
 
 import "./globals.css";
-// import Provider from "@/utils/Provider";
+import Provider from "@/utils/Provider";
 import HomeHeader from "@/components/HomeHeader";
 import UserProvider from "@/context/user-context";
 
@@ -22,14 +22,14 @@ export default function layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={kanit.className}>
-        {/* <Provider> */}
-        <UserProvider>
-          <div className="h-screen bg-zinc-800 text-zinc-50">
-            <HomeHeader />
-            <div>{children}</div>
-          </div>
-        </UserProvider>
-        {/* </Provider> */}
+        <Provider>
+          <UserProvider>
+            <div className="h-screen bg-zinc-800 text-zinc-50">
+              <HomeHeader />
+              <div>{children}</div>
+            </div>
+          </UserProvider>
+        </Provider>
       </body>
     </html>
   );

@@ -10,13 +10,13 @@ import { getBoardByUserId } from "@/lib/actions";
 import SideMenuItem from "./SideMenuItem";
 import NewBoard from "./NewBoard";
 import { useUserContext } from "@/context/user-context";
+import { User } from "@supabase/supabase-js";
 
-export default function Sidebar() {
+export default function Sidebar({ user }: { user: UserType }) {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const queryClient = useQueryClient();
-  const { user } = useUserContext();
 
-  // console.log(user);
+  console.log(user);
   // console.log(boards);
 
   useEffect(
@@ -65,7 +65,7 @@ export default function Sidebar() {
               </nav>
             )}
             <div className="p-4">
-              <NewBoard boards={boards} />
+              <NewBoard boards={boards} user={user} />
             </div>
           </>
         )}

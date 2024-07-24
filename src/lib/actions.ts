@@ -2,35 +2,23 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-// import { supabase } from "./supabase";
 import {
   changeImageSupabase,
   changeNameSupabase,
   changePasswordSupabase,
-  // changeImage,
-  // changeName,
-  // changePassword,
   createUserSupabse,
   getUserSupabase,
   loginSupabse,
   logoutSupabse,
 } from "./user";
-// import { hashPassword } from "./hash";
 
 import { ArchiveType, BoardType, ProgressType, TaskType } from "./types";
 import {
-  // createNewBoard,
-  // deleteBoardById,
-  // getBoards,
   createNewBoardSupabase,
   deleteBoardSupabase,
   getBoardSupabase,
 } from "./board";
 import {
-  // deleteTaskById,
-  // getTasksByBoardId,
-  // updateTaskById,
-  // newTask,
   getTasksSupabase,
   deleteTaskSupabase,
   newTaskSupabase,
@@ -42,7 +30,6 @@ import {
   deleteArchiveSupabase,
   getArchiveSupabase,
 } from "./archive";
-// import { addToArchive, deleteArchiveById, getArchiveByUserId } from "./archive";
 
 //AUTHANTICATION ACTIONS
 type AuthCredentialsType = {

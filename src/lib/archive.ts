@@ -1,12 +1,5 @@
 // import db from "./db";
-import supabase from "./supabase";
-
-type AddType = {
-  title: string;
-  body: string;
-  progress: "todo" | "doing" | "done";
-  board_name: string;
-};
+// import supabase from "./supabase";
 
 // export function addToArchive({
 //   title,
@@ -35,12 +28,22 @@ type AddType = {
 //   db.prepare("DELETE FROM archive WHERE id = ?").run(id);
 // }
 
+import { createClient } from "@/utils/supabase/server";
+
+type AddType = {
+  title: string;
+  body: string;
+  progress: "todo" | "doing" | "done";
+  board_name: string;
+};
+
 export async function addToArchiveSupabase({
   board_name,
   body,
   progress,
   title,
 }: AddType) {
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -59,6 +62,7 @@ export async function addToArchiveSupabase({
   }
 }
 export async function getArchiveSupabase() {
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -76,5 +80,6 @@ export async function getArchiveSupabase() {
   }
 }
 export async function deleteArchiveSupabase(id: number) {
+  const supabase = createClient();
   const { error } = await supabase.from("archive").delete().eq("id", id);
 }

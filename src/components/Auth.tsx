@@ -11,6 +11,7 @@ import { getUser } from "@/lib/actions";
 // import supabase from "@/lib/supabase";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
@@ -18,33 +19,25 @@ const inputClass =
 export default function Auth({
   mode,
   authAction,
+  loggedUser,
 }: {
   mode: "login" | "signup";
   authAction: (prev: {}, formData: FormData) => Promise<AuthFormState>;
+  loggedUser: User | null;
 }) {
   const [state, formAction] = useFormState(authAction, {} as AuthFormState);
   const { user, handleLogin } = useUserContext();
-  const supabase = createClient();
 
-  useEffect(
-    function () {
-      async function fetchLoggedUser() {
-        const {
-          data: { user: fetchedUser },
-        } = await supabase.auth.getUser();
-        console.log(fetchedUser);
-        if (fetchedUser) {
-          const loggedUserInfo = await getUser();
-          console.log("[LOGIN SUPABASE FUNCTİON]", loggedUserInfo);
-          handleLogin(loggedUserInfo);
-        }
-      }
-      fetchLoggedUser();
+  console.log(user);
+
+  const { data } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const user = await getUser();
+      handleLogin(user);
+      return user;
     },
-    [handleLogin, state, supabase]
-  );
-
-  if (user) redirect("/boards");
+  });
 
   return (
     <form

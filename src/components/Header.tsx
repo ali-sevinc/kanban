@@ -15,39 +15,38 @@ import MenuProvider from "./Menu";
 import { HiArchive, HiLogout, HiUser } from "react-icons/hi";
 import { useUserContext } from "@/context/user-context";
 
-export default function Header() {
+export default function Header({ user }: { user: UserType }) {
   const pathName = usePathname();
   const router = useRouter();
   const [showNewTodo, setShowNewTodo] = useState(false);
   const [boards, setBoards] = useState<BoardType[] | undefined>([]);
-  const { user } = useUserContext();
+  // const { user } = useUserContext();
 
-  const [loggedUser, setLoggedUser] = useState<{
-    name: string;
-    user_id: string;
-    image: string;
-    id: number;
-  } | null>(null);
+  // const [loggedUser, setLoggedUser] = useState<{
+  //   name: string;
+  //   user_id: string;
+  //   image: string;
+  //   id: number;
+  // } | null>(null);
 
-  useEffect(
-    function () {
-      async function fetchBoards() {
-        if (!user) return;
-        const logged = await getUser();
-        const res = await getBoardByUserId();
-        setLoggedUser(logged);
-        setBoards(res);
-      }
-      fetchBoards();
-    },
-    [user]
-  );
+  // useEffect(
+  //   function () {
+  //     async function fetchBoards() {
+  //       if (!user) return;
+  //       const logged = await getUser();
+  //       const res = await getBoardByUserId();
+  //       setLoggedUser(logged);
+  //       setBoards(res);
+  //     }
+  //     fetchBoards();
+  //   },
+  //   [user]
+  // );
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
 
   let displayName = "";
-  if (pathName === "/boards")
-    displayName = `Welcome ${loggedUser?.name}` || "Home";
+  if (pathName === "/boards") displayName = `Welcome ${user?.name}` || "Home";
   if (pathName !== "/boards")
     displayName =
       boards?.find((item) => item.slug === pathName.slice(1))?.title || "";
@@ -76,9 +75,9 @@ export default function Header() {
             <MenuProvider>
               <MenuProvider.Toggle openName="profile">
                 <img
-                  src={loggedUser?.image}
+                  src={user?.image}
                   className="w-14 h-14 rounded-full p-1 border-2 object-cover"
-                  alt={`${loggedUser?.name} profile picture.`}
+                  alt={`${user?.name} profile picture.`}
                 />
               </MenuProvider.Toggle>
               <MenuProvider.List openName="profile">

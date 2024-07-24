@@ -16,15 +16,16 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "@/context/user-context";
 import { redirect } from "next/navigation";
+import { User } from "@supabase/supabase-js";
 
-type PropsType = { slug: string; isLogin: boolean };
+type PropsType = { slug: string; user: User | null };
 
-export default function Board({ slug, isLogin }: PropsType) {
+export default function Board({ slug, user }: PropsType) {
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { user, handleLogin } = useUserContext();
+  // const { user, handleLogin } = useUserContext();
 
   const queryCliet = useQueryClient();
 
@@ -62,10 +63,7 @@ export default function Board({ slug, isLogin }: PropsType) {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-
-  if (!isLogin) {
-    return redirect("/auth/login");
-  }
+  console.log(user);
 
   const tasks: { title: "todo" | "doing" | "done"; task: TaskType[] }[] = [
     {

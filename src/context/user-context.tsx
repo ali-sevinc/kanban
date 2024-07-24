@@ -2,6 +2,7 @@
 
 import { getUser } from "@/lib/actions";
 import { createClient } from "@/utils/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 // import supabase from "@/lib/supabase";
 import {
   ReactNode,
@@ -35,7 +36,6 @@ const UserContext = createContext(initialState);
 
 export default function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(null);
-  const supabase = createClient();
 
   const handleLogin = useCallback(function (userInfo: User) {
     setUser(userInfo);
@@ -44,21 +44,25 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
-  useEffect(
-    function () {
-      async function fetchLoggedUser() {
-        const {
-          data: { user: fetchedUser },
-        } = await supabase.auth.getUser();
-        if (fetchedUser) {
-          const loggedUserInfo = await getUser();
-          handleLogin(loggedUserInfo);
-        }
-      }
-      fetchLoggedUser();
+  useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const user = await getUser();
+      handleLogin(user);
+      return user;
     },
-    [handleLogin, supabase]
-  );
+  });
+
+  // useEffect(
+  //   function () {
+  //     async function fetchLoggedUser() {
+  //       const loggedUserInfo = await getUser();
+  //       handleLogin(loggedUserInfo);
+  //     }
+  //     fetchLoggedUser();
+  //   },
+  //   [handleLogin]
+  // );
 
   return (
     <UserContext.Provider value={{ user, handleLogin, handleLogout }}>

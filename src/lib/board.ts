@@ -1,5 +1,5 @@
 // import db from "./db";
-import supabase from "./supabase";
+// import supabase from "./supabase";
 
 // export function createNewBoard({
 //   title,
@@ -28,6 +28,7 @@ import supabase from "./supabase";
 // }
 
 /****************************************************************** */
+import { createClient } from "@/utils/supabase/server";
 
 export async function createNewBoardSupabase({
   title,
@@ -36,6 +37,7 @@ export async function createNewBoardSupabase({
   title: string;
   slug: string;
 }) {
+  const supabase = createClient();
   try {
     const {
       data: { user },
@@ -52,6 +54,7 @@ export async function createNewBoardSupabase({
 }
 
 export async function getBoardSupabase() {
+  const supabase = createClient();
   try {
     const {
       data: { user },
@@ -66,6 +69,7 @@ export async function getBoardSupabase() {
 }
 
 export async function deleteBoardSupabase(id: number) {
+  const supabase = createClient();
   try {
     let { error } = await supabase.from("boards").delete().eq("id", id);
     if (error) throw new Error("Board could not fetched");

@@ -5,19 +5,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import slugify from "slugify";
 
-import { BoardType, UserVerifyType } from "@/lib/types";
+import { BoardType, UserType, UserVerifyType } from "@/lib/types";
 import { createBoard } from "@/lib/actions";
 
 import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
 import Button from "./Button";
 import Modal from "./Modal";
-import { useUserContext } from "@/context/user-context";
 
-export default function NewBoard({ boards }: { boards: BoardType[] }) {
+export default function NewBoard({
+  boards,
+  user,
+}: {
+  boards: BoardType[];
+  user: UserType;
+}) {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
-  const { user } = useUserContext();
 
   const { mutate, isPending } = useMutation({
     mutationFn: ({ title, slug }: { title: string; slug: string }) =>
@@ -30,6 +34,8 @@ export default function NewBoard({ boards }: { boards: BoardType[] }) {
   const [title, setTitle] = useState("");
 
   const [error, setError] = useState("");
+
+  console.log(user);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();

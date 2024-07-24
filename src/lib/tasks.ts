@@ -1,6 +1,5 @@
 // import db from "./db";
-import supabase from "./supabase";
-import { ProgressType } from "./types";
+// import supabase from "./supabase";
 
 // export function getTasksByBoardId(board_id: string) {
 //   const res = db
@@ -45,6 +44,9 @@ import { ProgressType } from "./types";
 
 /* ****************************************************************************** */
 
+import { ProgressType } from "./types";
+import { createClient } from "@/utils/supabase/server";
+
 type NewTaskType = {
   board_id: number;
   body: string;
@@ -52,6 +54,7 @@ type NewTaskType = {
   title: string;
 };
 export async function getTasksSupabase(board_id: number) {
+  const supabase = createClient();
   try {
     let { data: tasks, error } = await supabase
       .from("tasks")
@@ -70,6 +73,7 @@ export async function newTaskSupabase({
   progress,
   title,
 }: NewTaskType) {
+  const supabase = createClient();
   try {
     const { data, error } = await supabase
       .from("tasks")
@@ -82,6 +86,7 @@ export async function newTaskSupabase({
   }
 }
 export async function updateTaskSupabase(id: number, progress: ProgressType) {
+  const supabase = createClient();
   try {
     const { data, error } = await supabase
       .from("tasks")
@@ -95,6 +100,7 @@ export async function updateTaskSupabase(id: number, progress: ProgressType) {
   }
 }
 export async function deleteTaskSupabase(id: number) {
+  const supabase = createClient();
   try {
     const { error } = await supabase.from("tasks").delete().eq("id", id);
     if (error) throw new Error("Failed to delete task.");
