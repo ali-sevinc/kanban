@@ -1,45 +1,5 @@
-// import db from "./db";
-import { UserType } from "./types";
-// import supabase from "./supabase";
 import { createClient } from "@/utils/supabase/server";
-
-// export function createUser(
-//   email: string,
-//   password: string,
-//   name: string,
-//   image: string
-// ) {
-//   const res = db
-//     .prepare(
-//       "INSERT INTO users (email, password, name, image) VALUES (?, ?, ?, ?)"
-//     )
-//     .run(email, password, name, image);
-//   return res.lastInsertRowid;
-// }
-
-// export function getUserByEmail(email: string) {
-//   return db
-//     .prepare("SELECT * FROM users WHERE email = ?")
-//     .get(email) as UserType;
-// }
-
-// export function getUserById(id: number) {
-//   return db.prepare("SELECT * FROM users WHERE id = ?").get(id) as UserType;
-// }
-
-// export function changeImage(image: string, id: number) {
-//   return db.prepare("UPDATE users SET image = ? WHERE id = ?").run(image, id);
-// }
-// export function changeName(name: string, id: number) {
-//   return db.prepare("UPDATE users SET name = ? WHERE id = ?").run(name, id);
-// }
-// export function changePassword(password: string, id: number) {
-//   return db
-//     .prepare("UPDATE users SET password = ? WHERE id = ?")
-//     .run(password, id);
-// }
-
-/* ****************************************************************** */
+import supabase from "./supabase";
 
 export async function createUserSupabse(userData: {
   email: string;
@@ -47,8 +7,8 @@ export async function createUserSupabse(userData: {
   name?: string;
   image?: string;
 }) {
-  const supabase = createClient();
-  const { data, error: createError } = await supabase.auth.signUp({
+  const supabaseServer = createClient();
+  const { data, error: createError } = await supabaseServer.auth.signUp({
     email: userData.email,
     password: userData.password,
   });
@@ -56,7 +16,7 @@ export async function createUserSupabse(userData: {
   if (createError) throw new Error(createError.message);
 
   const { data: userInfo, error } = await supabase
-    .from("users")
+    .from("users_info")
     .insert([
       {
         user_id: data.user?.id,
@@ -86,8 +46,8 @@ export async function loginSupabse(email: string, password: string) {
 }
 
 export async function logoutSupabse() {
-  const supabase = createClient();
-  let { error } = await supabase.auth.signOut();
+  const supabaseServer = createClient();
+  let { error } = await supabaseServer.auth.signOut();
   if (error) throw new Error(error.message);
 }
 
@@ -100,17 +60,19 @@ export async function getUser() {
 }
 
 export async function getUserSupabase() {
-  const supabase = createClient();
-  const {
-    data: { user: loggedUser },
-  } = await supabase.auth.getUser();
+  const supabaseServer = createClient();
+
   try {
-    let { data: user, error } = await supabase
-      .from("users")
+    const {
+      data: { user },
+    } = await supabaseServer.auth.getUser();
+    let { data, error } = await supabase
+      .from("users_info")
       .select("*")
-      .eq("user_id", loggedUser?.id);
+      .eq("user_id", user?.id);
+
     if (error) throw new Error(error.message);
-    return user as {
+    return data?.[0] as {
       name: string;
       user_id: string;
       image: string;
@@ -121,15 +83,15 @@ export async function getUserSupabase() {
   }
 }
 export async function changeImageSupabase(image: string) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
   try {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabaseServer.auth.getUser();
     if (!user?.id) throw new Error("User not found.");
 
     const { data, error } = await supabase
-      .from("users")
+      .from("users_info")
       .update({ image })
       .eq("user_id", user.id)
       .select();
@@ -139,15 +101,15 @@ export async function changeImageSupabase(image: string) {
   }
 }
 export async function changeNameSupabase(newName: string) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
   try {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabaseServer.auth.getUser();
     if (!user?.id) throw new Error("User not found.");
 
     const { data, error } = await supabase
-      .from("users")
+      .from("users_info")
       .update({ name: newName })
       .eq("user_id", user.id)
       .select();
@@ -157,11 +119,11 @@ export async function changeNameSupabase(newName: string) {
   }
 }
 export async function changePasswordSupabase(newPassword: string) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
   try {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabaseServer.auth.getUser();
     if (!user?.id) throw new Error("User not found.");
 
     const { data, error } = await supabase.auth.updateUser({

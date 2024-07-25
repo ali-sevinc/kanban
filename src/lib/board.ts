@@ -1,34 +1,5 @@
-// import db from "./db";
-// import supabase from "./supabase";
-
-// export function createNewBoard({
-//   title,
-//   slug,
-//   user_id,
-// }: {
-//   title: string;
-//   slug: string;
-//   user_id: string;
-// }) {
-//   const res = db
-//     .prepare("INSERT INTO boards (title, slug, user_id) VALUES (?, ?, ?)")
-//     .run(title, slug, user_id);
-
-//   return res;
-// }
-
-// export function getBoards(id: string) {
-//   const res = db.prepare("SELECT * FROM boards WHERE user_id = ?").all(id);
-//   return res;
-// }
-
-// export function deleteBoardById(id: number) {
-//   const res = db.prepare("DELETE FROM boards WHERE id = ?").run(id);
-//   return res;
-// }
-
-/****************************************************************** */
 import { createClient } from "@/utils/supabase/server";
+import supabase from "./supabase";
 
 export async function createNewBoardSupabase({
   title,
@@ -37,11 +8,11 @@ export async function createNewBoardSupabase({
   title: string;
   slug: string;
 }) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
   try {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabaseServer.auth.getUser();
 
     if (!user?.id) throw new Error("User not found.");
     const { data, error } = await supabase
@@ -54,11 +25,11 @@ export async function createNewBoardSupabase({
 }
 
 export async function getBoardSupabase() {
-  const supabase = createClient();
+  const supabaseServer = createClient();
   try {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabaseServer.auth.getUser();
     let { data, error } = await supabase
       .from("boards")
       .select("*")
@@ -69,7 +40,6 @@ export async function getBoardSupabase() {
 }
 
 export async function deleteBoardSupabase(id: number) {
-  const supabase = createClient();
   try {
     let { error } = await supabase.from("boards").delete().eq("id", id);
     if (error) throw new Error("Board could not fetched");

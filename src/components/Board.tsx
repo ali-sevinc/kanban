@@ -46,11 +46,6 @@ export default function Board({ slug, user }: PropsType) {
     queryFn: () => getTasks(boardId),
   });
 
-  // const { mutate: deleteMutation } = useMutation({
-  //   mutationFn: ({ id }: { id: number }) => deleteTask(id),
-  //   onSettled: () => router.push("/boards"),
-  // });
-
   const { mutate: updateMutation } = useMutation({
     mutationFn: ({
       progress,
@@ -63,7 +58,6 @@ export default function Board({ slug, user }: PropsType) {
       queryCliet.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-  console.log(user);
 
   const tasks: { title: "todo" | "doing" | "done"; task: TaskType[] }[] = [
     {

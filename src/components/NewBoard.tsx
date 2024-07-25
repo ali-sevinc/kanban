@@ -35,8 +35,6 @@ export default function NewBoard({
 
   const [error, setError] = useState("");
 
-  console.log(user);
-
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setError("");

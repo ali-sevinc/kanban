@@ -83,6 +83,7 @@ export async function logout() {
 
 export async function getUser() {
   const user = await getUserSupabase();
+  console.log("GETUSER FUNCTION", user?.id);
   return user;
 }
 

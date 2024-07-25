@@ -16,9 +16,6 @@ export default function Sidebar({ user }: { user: UserType }) {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const queryClient = useQueryClient();
 
-  console.log(user);
-  // console.log(boards);
-
   useEffect(
     function () {
       async function fetchBoards() {
