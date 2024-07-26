@@ -2,11 +2,13 @@
 // import { verifyAuth } from "@/lib/auth";
 import { logout } from "@/lib/actions";
 import Link from "next/link";
-import supabase from "@/lib/supabase";
-import { useUserContext } from "@/context/user-context";
+import { User } from "@supabase/supabase-js";
 
-export default function HomeHeader() {
-  const { user } = useUserContext();
+// import supabase from "@/lib/supabase";
+// import { useUserContext } from "@/context/user-context";
+
+export default function HomeHeader({ user }: { user: User | null }) {
+  // const { user } = useUserContext();
 
   let isAuth = false;
   if (user) isAuth = true;

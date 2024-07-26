@@ -61,11 +61,12 @@ export async function getUser() {
 
 export async function getUserSupabase() {
   const supabaseServer = createClient();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
+  if (!user?.id) return;
 
   try {
-    const {
-      data: { user },
-    } = await supabaseServer.auth.getUser();
     let { data, error } = await supabase
       .from("users_info")
       .select("*")

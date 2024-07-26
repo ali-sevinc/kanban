@@ -17,9 +17,12 @@ export default async function ProfilePage() {
   const {
     data: { user: isAuth },
   } = await supabase.auth.getUser();
+
   if (!isAuth) {
     return redirect("/auth/login");
   }
+
+  const user = await getUser();
 
   async function updateImage(prevState: {}, formData: FormData) {
     "use server";
@@ -68,6 +71,7 @@ export default async function ProfilePage() {
       updateImage={updateImage}
       updateName={updateName}
       updatePassword={updatePassword}
+      user={user}
     />
   );
 }

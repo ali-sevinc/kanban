@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { BoardType, ProgressType, TaskType, UserVerifyType } from "@/lib/types";
+import { BoardType, ProgressType, TaskType } from "@/lib/types";
 
 import BoardItems from "./BoardItems";
 import {
@@ -10,13 +10,13 @@ import {
   deleteTask,
   getBoardByUserId,
   getTasks,
-  getUser,
   updateTask,
 } from "@/lib/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useUserContext } from "@/context/user-context";
-import { redirect } from "next/navigation";
 import { User } from "@supabase/supabase-js";
+
+// import { useUserContext } from "@/context/user-context";
+// import { redirect } from "next/navigation";
 
 type PropsType = { slug: string; user: User | null };
 

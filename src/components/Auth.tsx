@@ -1,17 +1,11 @@
 "use client";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 
 import Button from "./Button";
 import { useFormState, useFormStatus } from "react-dom";
 import { AuthFormState } from "@/lib/types";
-import { ReactNode, useEffect, useState } from "react";
-import { useUserContext } from "@/context/user-context";
-import { getUser } from "@/lib/actions";
-// import supabase from "@/lib/supabase";
 import { User } from "@supabase/supabase-js";
-import { createClient } from "@/utils/supabase/client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const inputClass =
   "text-zinc-900 w-full text-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded";
@@ -26,18 +20,18 @@ export default function Auth({
   loggedUser: User | null;
 }) {
   const [state, formAction] = useFormState(authAction, {} as AuthFormState);
-  const { user, handleLogin } = useUserContext();
+  // const { user, handleLogin } = useUserContext();
 
-  console.log(user);
+  // console.log(user);
 
-  const { data } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const user = await getUser();
-      handleLogin(user);
-      return user;
-    },
-  });
+  // const { data } = useQuery({
+  //   queryKey: ["user"],
+  //   queryFn: async () => {
+  //     const user = await getUser();
+  //     // handleLogin(user);
+  //     return user;
+  //   },
+  // });
 
   return (
     <form

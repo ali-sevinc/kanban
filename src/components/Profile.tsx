@@ -5,7 +5,8 @@ import Modal from "./Modal";
 import { AnimatePresence } from "framer-motion";
 import { useFormState } from "react-dom";
 import Button from "./Button";
-import { useUserContext } from "@/context/user-context";
+import { UserType } from "@/lib/types";
+// import { useUserContext } from "@/context/user-context";
 
 type PropsType = {
   updateImage: (
@@ -20,16 +21,17 @@ type PropsType = {
     prevState: {},
     formData: FormData
   ) => Promise<{ currentError?: string; newError?: string }>;
+  user: UserType | undefined;
 };
 export default function Profile({
   updateImage,
   updateName,
   updatePassword,
+  user,
 }: PropsType) {
   const [showImageForm, setShowImageForm] = useState(false);
   const [showNameForm, setShowNameForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const { user } = useUserContext();
 
   async function handleImage(prevState: {}, formData: FormData) {
     const data = await updateImage(prevState, formData);

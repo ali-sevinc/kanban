@@ -1,49 +1,4 @@
-// import db from "./db";
-// import supabase from "./supabase";
-
-// export function getTasksByBoardId(board_id: string) {
-//   const res = db
-//     .prepare("SELECT * FROM tasks WHERE board_id = ?")
-//     .all(board_id);
-//   return res;
-// }
-
-// type NewTaskType = {
-//   board_id: number;
-//   body: string;
-//   progress: ProgressType;
-//   title: string;
-// };
-// export function newTask({ board_id, body, progress, title }: NewTaskType) {
-//   const res = db
-//     .prepare(
-//       "INSERT INTO tasks (title, body, progress, board_id) VALUES (?, ?, ?, ?)"
-//     )
-//     .run(title, body, progress, board_id);
-//   return res;
-// }
-
-// export function updateTaskById({
-//   id,
-//   progress,
-// }: {
-//   id: number;
-//   progress: ProgressType;
-// }) {
-//   const res = db
-//     .prepare("UPDATE tasks SET progress = ? WHERE id = ?")
-//     .run(progress, id);
-
-//   return res;
-// }
-
-// export function deleteTaskById(id: number) {
-//   const res = db.prepare("DELETE FROM tasks WHERE id = ?").run(id);
-//   return res;
-// }
-
-/* ****************************************************************************** */
-
+import supabase from "./supabase";
 import { ProgressType } from "./types";
 import { createClient } from "@/utils/supabase/server";
 
@@ -54,7 +9,11 @@ type NewTaskType = {
   title: string;
 };
 export async function getTasksSupabase(board_id: number) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
+  if (!user?.id) return;
   try {
     let { data: tasks, error } = await supabase
       .from("tasks")
@@ -73,7 +32,11 @@ export async function newTaskSupabase({
   progress,
   title,
 }: NewTaskType) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
+  if (!user?.id) return;
   try {
     const { data, error } = await supabase
       .from("tasks")
@@ -86,7 +49,11 @@ export async function newTaskSupabase({
   }
 }
 export async function updateTaskSupabase(id: number, progress: ProgressType) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
+  if (!user?.id) return;
   try {
     const { data, error } = await supabase
       .from("tasks")
@@ -100,7 +67,11 @@ export async function updateTaskSupabase(id: number, progress: ProgressType) {
   }
 }
 export async function deleteTaskSupabase(id: number) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
+  if (!user?.id) return;
   try {
     const { error } = await supabase.from("tasks").delete().eq("id", id);
     if (error) throw new Error("Failed to delete task.");

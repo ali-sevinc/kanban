@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 
-import { BoardType, UserType, UserVerifyType } from "@/lib/types";
-import { getBoardByUserId, getUser, logout } from "@/lib/actions";
+import { BoardType, UserType } from "@/lib/types";
+import { getBoardByUserId, logout } from "@/lib/actions";
 
 import TextButton from "./TextButton";
 import Modal from "./Modal";
@@ -13,11 +13,9 @@ import NewTodo from "./NewTodo";
 import Link from "next/link";
 import MenuProvider from "./Menu";
 import { HiArchive, HiLogout, HiUser } from "react-icons/hi";
-import { useUserContext } from "@/context/user-context";
 
 export default function Header({ user }: { user: UserType }) {
   const pathName = usePathname();
-  const router = useRouter();
   const [showNewTodo, setShowNewTodo] = useState(false);
   const [boards, setBoards] = useState<BoardType[] | undefined>([]);
 
@@ -35,7 +33,7 @@ export default function Header({ user }: { user: UserType }) {
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
 
-  console.log(board);
+  // console.log(board);
 
   let displayName = "";
   if (pathName === "/boards") displayName = `Welcome ${user?.name}` || "Home";

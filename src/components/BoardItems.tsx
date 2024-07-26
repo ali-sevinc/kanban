@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ProgressType, TaskType } from "@/lib/types";
-import { HiArchive, HiDotsHorizontal, HiTrash, HiX } from "react-icons/hi";
+import { HiArchive, HiDotsHorizontal, HiTrash } from "react-icons/hi";
 import MenuProvider from "./Menu";
 
 type PropsType = {
