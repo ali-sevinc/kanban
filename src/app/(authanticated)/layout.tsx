@@ -27,7 +27,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const loggedUser = await getUser();
-  console.log("[LOGGED USER]", loggedUser);
+  // console.log("[LOGGED USER]", loggedUser);
+  if (!loggedUser) redirect("/auth/login");
   return (
     <html lang="en">
       <body className={kanit.className}>

@@ -12,7 +12,7 @@ import NewBoard from "./NewBoard";
 import { useUserContext } from "@/context/user-context";
 import { User } from "@supabase/supabase-js";
 
-export default function Sidebar({ user }: { user: UserType }) {
+export default function Sidebar({ user }: { user: UserType | undefined }) {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const queryClient = useQueryClient();
 
