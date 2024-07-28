@@ -14,7 +14,7 @@ import Link from "next/link";
 import MenuProvider from "./Menu";
 import { HiArchive, HiLogout, HiUser } from "react-icons/hi";
 
-export default function Header({ user }: { user: UserType }) {
+export default function Header({ user }: { user: UserType | undefined }) {
   const pathName = usePathname();
   const [showNewTodo, setShowNewTodo] = useState(false);
   const [boards, setBoards] = useState<BoardType[] | undefined>([]);

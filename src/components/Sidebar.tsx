@@ -9,7 +9,7 @@ import { getBoardByUserId } from "@/lib/actions";
 
 import SideMenuItem from "./SideMenuItem";
 import NewBoard from "./NewBoard";
-import { useUserContext } from "@/context/user-context";
+// import { useUserContext } from "@/context/user-context";
 import { User } from "@supabase/supabase-js";
 
 export default function Sidebar({ user }: { user: UserType | undefined }) {
