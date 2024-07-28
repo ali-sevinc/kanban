@@ -125,7 +125,9 @@ export default function Board({ slug, user }: PropsType) {
     if (!board_name || !user_id) return;
     const data = { title, body, progress, board_name, user_id };
     const res = await createArchive(data);
+
     await deleteTask(id);
+    queryCliet.invalidateQueries({ queryKey: ["tasks"] });
   }
 
   return (

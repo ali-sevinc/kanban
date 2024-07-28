@@ -83,18 +83,14 @@ export async function getUserSupabase() {
     throw new Error("Could not get user.");
   }
 }
-export async function changeImageSupabase(image: string) {
-  const supabaseServer = createClient();
+export async function changeImageSupabase(image: string, userId: string) {
   try {
-    const {
-      data: { user },
-    } = await supabaseServer.auth.getUser();
-    if (!user?.id) throw new Error("User not found.");
+    if (userId) throw new Error("User not found.");
 
     const { data, error } = await supabase
       .from("users_info")
       .update({ image })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .select();
     if (error) throw new Error("Failed to update image.");
   } catch (error) {

@@ -88,7 +88,6 @@ export async function getUser() {
 }
 
 //UPDATE USER
-
 export async function updateImageById(imageUrl: string) {
   const user = await getUser();
 
@@ -101,7 +100,7 @@ export async function updateImageById(imageUrl: string) {
   await deleteImage(publicId);
 
   // const res = changeImage(imageUrl, user.id);
-  const res = await changeImageSupabase(imageUrl);
+  const res = await changeImageSupabase(imageUrl, user.user_id);
   revalidatePath("/");
   return res;
 }

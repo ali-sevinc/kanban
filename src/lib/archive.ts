@@ -1,34 +1,5 @@
-// import db from "./db";
-// import supabase from "./supabase";
-
-// export function addToArchive({
-//   title,
-//   body,
-//   progress,
-//   board_name,
-//   user_id,
-// }: AddType) {
-//   const res = db
-//     .prepare(
-//       "INSERT INTO archive (title, body, progress, board_name, user_id) VALUES (?, ?, ?, ?, ?)"
-//     )
-//     .run(title, body, progress, board_name, user_id);
-
-//   return res;
-// }
-
-// export function getArchiveByUserId(user_id: string) {
-//   const res = db
-//     .prepare("SELECT * FROM archive WHERE user_id = ?")
-//     .all(user_id);
-//   return res;
-// }
-
-// export function deleteArchiveById(id: number) {
-//   db.prepare("DELETE FROM archive WHERE id = ?").run(id);
-// }
-
 import { createClient } from "@/utils/supabase/server";
+import supabase from "./supabase";
 
 type AddType = {
   title: string;
@@ -43,10 +14,10 @@ export async function addToArchiveSupabase({
   progress,
   title,
 }: AddType) {
-  const supabase = createClient();
+  const supabaseServer = createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabaseServer.auth.getUser();
 
   try {
     if (!user?.id) throw new Error("User not found.");
@@ -62,10 +33,10 @@ export async function addToArchiveSupabase({
   }
 }
 export async function getArchiveSupabase() {
-  const supabase = createClient();
+  const supabaseServer = createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabaseServer.auth.getUser();
   try {
     if (!user?.id) throw new Error("User not found.");
     let { data, error } = await supabase
@@ -80,6 +51,5 @@ export async function getArchiveSupabase() {
   }
 }
 export async function deleteArchiveSupabase(id: number) {
-  const supabase = createClient();
   const { error } = await supabase.from("archive").delete().eq("id", id);
 }
