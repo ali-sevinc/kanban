@@ -30,6 +30,7 @@ import {
   deleteArchiveSupabase,
   getArchiveSupabase,
 } from "./archive";
+import { createClient } from "@/utils/supabase/server";
 
 //AUTHANTICATION ACTIONS
 type AuthCredentialsType = {
@@ -83,7 +84,7 @@ export async function logout() {
 
 export async function getUser() {
   const user = await getUserSupabase();
-  console.log("GETUSER FUNCTION", user?.id);
+  // console.log("GETUSER FUNCTION", user?.id);
   return user;
 }
 
@@ -97,10 +98,12 @@ export async function updateImageById(imageUrl: string) {
 
   if (!publicId) return;
 
-  await deleteImage(publicId);
+  const res = await changeImageSupabase(imageUrl);
 
+  if (!res?.length) return;
+
+  await deleteImage(publicId);
   // const res = changeImage(imageUrl, user.id);
-  const res = await changeImageSupabase(imageUrl, user.user_id);
   revalidatePath("/");
   return res;
 }
@@ -111,9 +114,23 @@ export async function updateNameById(name: string) {
   revalidatePath("/");
   return res;
 }
-export async function updatePasswordById(password: string, id: number) {
-  // const hashedPassword = hashPassword(password);
-  // const res = changePassword(hashedPassword, id);
+export async function updatePasswordById(
+  email: string,
+  currentPassword: string,
+  password: string
+) {
+  const supabase = createClient();
+  let { error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: currentPassword,
+  });
+
+  if (error) {
+    return {
+      currentError: "Wrong Password",
+    };
+  }
+
   const res = await changePasswordSupabase(password);
   revalidatePath("/");
   return res;

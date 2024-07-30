@@ -50,20 +50,19 @@ export default async function ProfilePage() {
     "use server";
     const currentPas = formData?.get("current-password") as string;
     const newPas = formData?.get("new-password") as string;
-    // const validOldPassword = verifyPassword(user.password, currentPas);
 
-    // if (!validOldPassword)
-    //   return {
-    //     currentError: "Wrong password.",
-    //   };
-    // if (newPas.trim().length < 3)
-    //   return {
-    //     newError: "Please enter a valid password.",
-    //   };
+    if (!isAuth || !isAuth?.email)
+      return {
+        currentError: "User Not Found!",
+      };
 
-    // await updatePasswordById(newPas, user.id);
+    if (newPas.trim().length < 3)
+      return {
+        newError: "Please enter a valid password.",
+      };
+    const res = await updatePasswordById(isAuth.email, currentPas, newPas);
 
-    return {};
+    return res || {};
   }
 
   return (

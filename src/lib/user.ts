@@ -83,16 +83,24 @@ export async function getUserSupabase() {
     throw new Error("Could not get user.");
   }
 }
-export async function changeImageSupabase(image: string, userId: string) {
+export async function changeImageSupabase(image: string) {
+  const supabaseServer = createClient();
+
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
+
   try {
-    if (userId) throw new Error("User not found.");
+    if (!user?.id) throw new Error("User not found.");
 
     const { data, error } = await supabase
       .from("users_info")
-      .update({ image })
-      .eq("user_id", userId)
+      .update({ image: image })
+      .eq("user_id", user.id)
       .select();
+
     if (error) throw new Error("Failed to update image.");
+    return data;
   } catch (error) {
     console.error(error);
   }
@@ -118,12 +126,12 @@ export async function changeNameSupabase(newName: string) {
 export async function changePasswordSupabase(newPassword: string) {
   const supabaseServer = createClient();
   try {
-    const {
-      data: { user },
-    } = await supabaseServer.auth.getUser();
-    if (!user?.id) throw new Error("User not found.");
+    // const {
+    //   data: { user },
+    // } = await supabaseServer.auth.getUser();
+    // if (!user?.id) throw new Error("User not found.");
 
-    const { data, error } = await supabase.auth.updateUser({
+    const { data, error } = await supabaseServer.auth.updateUser({
       password: newPassword,
     });
     if (error) throw new Error("Failed to change password.");
