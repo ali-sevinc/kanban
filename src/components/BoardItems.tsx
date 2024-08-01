@@ -7,6 +7,7 @@ type PropsType = {
   task: TaskType[];
   title: string;
   isChanging: boolean;
+  isLoading: boolean;
   onStartDrag: (item: TaskType) => void;
   onDrop: () => void;
   onDelete: (id: number) => void;
@@ -30,6 +31,7 @@ export default function BoardItems({
   isChanging,
   onDelete,
   onArchive,
+  isLoading,
 }: PropsType) {
   function handleDrop(event: React.DragEvent) {
     event.preventDefault();
@@ -44,7 +46,8 @@ export default function BoardItems({
       <h2 className="text-center text-xl font-semibold pb-4 uppercase">
         {title}
       </h2>
-      {task?.length > 0 ? (
+
+      {task?.length > 0 && (
         <motion.ol className="flex flex-col gap-2">
           {task.map((item) => {
             let progressStyle = "";
@@ -99,8 +102,14 @@ export default function BoardItems({
             );
           })}
         </motion.ol>
-      ) : (
+      )}
+      {!isLoading && task?.length === 0 && (
         <p className="text-center text-lg">No task found.</p>
+      )}
+      {isLoading && (
+        <p className="text-center text-xl font-semibold animate-pulse">
+          Loading...
+        </p>
       )}
     </li>
   );

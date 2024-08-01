@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 import { BoardType, ProgressType, TaskType } from "@/lib/types";
 
@@ -23,6 +23,7 @@ type PropsType = { slug: string; user: User | null };
 export default function Board({ slug, user }: PropsType) {
   const [draggedItem, setDraggedItem] = useState<TaskType | null>(null);
 
+  const [isChanging, setIsChanging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // const { user, handleLogin } = useUserContext();
@@ -43,7 +44,12 @@ export default function Board({ slug, user }: PropsType) {
 
   const { data: taskItems } = useQuery({
     queryKey: ["tasks"],
-    queryFn: () => getTasks(boardId),
+    queryFn: async () => {
+      setIsLoading(true);
+      const res = await getTasks(boardId);
+      setIsLoading(false);
+      return res;
+    },
   });
 
   const { mutate: updateMutation } = useMutation({
@@ -78,14 +84,14 @@ export default function Board({ slug, user }: PropsType) {
     progress: "todo" | "doing" | "done",
     taskId: number
   ) {
-    setIsLoading(true);
+    setIsChanging(true);
     if (!boardId) return;
     try {
       await updateTask(taskId, progress);
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsChanging(false);
     }
   }
 
@@ -139,9 +145,10 @@ export default function Board({ slug, user }: PropsType) {
           task={task.task}
           onStartDrag={handleStartDrag}
           onDrop={() => handleDropped(task.title)}
-          isChanging={isLoading}
+          isChanging={isChanging}
           onDelete={handleDelete}
           onArchive={handleAddArchive}
+          isLoading={isLoading}
         />
       ))}
     </ul>

@@ -12,6 +12,7 @@ import TextButton from "./TextButton";
 import InputGroup from "./InputGroup";
 import Button from "./Button";
 import Modal from "./Modal";
+import { useFormStatus } from "react-dom";
 
 export default function NewBoard({
   boards,
@@ -24,8 +25,8 @@ export default function NewBoard({
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({ title, slug }: { title: string; slug: string }) =>
-      createBoard({ title, slug }),
+    mutationFn: async ({ title, slug }: { title: string; slug: string }) =>
+      await createBoard({ title, slug }),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
@@ -59,7 +60,7 @@ export default function NewBoard({
       return;
     }
 
-    mutate({ title, slug });
+    await mutate({ title, slug });
 
     setShowForm(false);
   }
@@ -92,20 +93,30 @@ export default function NewBoard({
               {error !== "" && (
                 <p className="text-sm text-red-500 pt-1 text-center">{error}</p>
               )}
-              <div className="flex items-end justify-center gap-4 pt-8 pb-4">
-                <Button
-                  model="secondary"
-                  type="button"
-                  onClick={handleCloseForm}
-                >
-                  Close
-                </Button>
-                <Button type="submit">Create</Button>
-              </div>
+              <FormButton onClose={handleCloseForm} />
             </form>
           </Modal>
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function FormButton({ onClose }: { onClose: () => void }) {
+  const { pending } = useFormStatus();
+  return (
+    <div className="flex items-end justify-center gap-4 pt-8 pb-4">
+      <Button
+        disabled={pending}
+        model="secondary"
+        type="button"
+        onClick={onClose}
+      >
+        Close
+      </Button>
+      <Button disabled={pending} type="submit">
+        {pending ? "Creating..." : "Create"}
+      </Button>
+    </div>
   );
 }
