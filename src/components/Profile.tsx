@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import { AnimatePresence } from "framer-motion";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import Button from "./Button";
 import { UserType } from "@/lib/types";
 // import { useUserContext } from "@/context/user-context";
@@ -103,7 +103,7 @@ export default function Profile({
                   accept="image/png, image/jpeg"
                 />
               </div>
-              <div className="flex items-center justify-center gap-8 pt-4 pb-2 text-zinc-50">
+              {/* <div className="flex items-center justify-center gap-8 pt-4 pb-2 text-zinc-50">
                 <Button
                   model="secondary"
                   onClick={() => setShowImageForm(false)}
@@ -111,7 +111,8 @@ export default function Profile({
                   Close
                 </Button>
                 <Button type="submit">Submit</Button>
-              </div>
+              </div> */}
+              <FormButton onClose={() => setShowImageForm(false)} />
               {imageState.error && (
                 <p className="text-center text-sm text-red-400">
                   {imageState.error}
@@ -139,7 +140,7 @@ export default function Profile({
                   className="px-2 py-1 rounded"
                 />
               </div>
-              <div className="flex pt-4 pb-2 items-center justify-center gap-8 text-zinc-50">
+              {/* <div className="flex pt-4 pb-2 items-center justify-center gap-8 text-zinc-50">
                 <Button
                   model="secondary"
                   onClick={() => setShowNameForm(false)}
@@ -147,7 +148,8 @@ export default function Profile({
                   Close
                 </Button>
                 <Button type="submit">Submit</Button>
-              </div>
+              </div> */}
+              <FormButton onClose={() => setShowNameForm(false)} />
               {nameState.error && (
                 <p className="text-center text-sm text-red-400">
                   {nameState.error}
@@ -189,7 +191,7 @@ export default function Profile({
                   className="px-2 py-1 rounded"
                 />
               </div>
-              <div className="flex pt-4 pb-2 items-center justify-center gap-8 text-zinc-50">
+              {/* <div className="flex pt-4 pb-2 items-center justify-center gap-8 text-zinc-50">
                 <Button
                   model="secondary"
                   onClick={() => setShowPasswordForm(false)}
@@ -197,7 +199,8 @@ export default function Profile({
                   Close
                 </Button>
                 <Button type="submit">Submit</Button>
-              </div>
+              </div> */}
+              <FormButton onClose={() => setShowPasswordForm(false)} />
               {passwordState.currentError && (
                 <p className="text-center text-sm text-red-400">
                   {passwordState.currentError}
@@ -213,5 +216,19 @@ export default function Profile({
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function FormButton({ onClose }: { onClose: () => void }) {
+  const { pending } = useFormStatus();
+  return (
+    <div className="flex pt-4 pb-2 items-center justify-center gap-8 text-zinc-50">
+      <Button disabled={pending} model="secondary" onClick={onClose}>
+        Close
+      </Button>
+      <Button disabled={pending} type="submit">
+        {pending ? "Submitting..." : "Submit"}
+      </Button>
+    </div>
   );
 }

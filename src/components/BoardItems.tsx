@@ -63,7 +63,9 @@ export default function BoardItems({
                 draggable={!isChanging}
                 onDragStart={() => onStartDrag(item)}
                 key={item.id}
-                className="bg-zinc-700 rounded-xl relative px-4 py-2 mx-4 h-32 cursor-pointer flex flex-col justify-between"
+                className={`bg-zinc-700 rounded-xl relative px-4 py-2 mx-4 h-32 cursor-pointer flex flex-col justify-between ${
+                  isLoading ? "animate-pulse" : ""
+                }`}
               >
                 <h3 className="font-semibold text-lg">{item.title}</h3>
                 <p>{item.body}</p>
@@ -103,14 +105,18 @@ export default function BoardItems({
           })}
         </motion.ol>
       )}
-      {!isLoading && task?.length === 0 && (
-        <p className="text-center text-lg">No task found.</p>
+      {task?.length === 0 && (
+        <p
+          className={`text-center text-lg ${isLoading ? "animate-pulse" : ""}`}
+        >
+          No task found.
+        </p>
       )}
-      {isLoading && (
+      {/* {isLoading && (
         <p className="text-center text-xl font-semibold animate-pulse">
           Loading...
         </p>
-      )}
+      )} */}
     </li>
   );
 }
