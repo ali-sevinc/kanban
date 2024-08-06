@@ -6,10 +6,8 @@ import Sidebar from "@/components/Sidebar";
 import Provider from "@/utils/Provider";
 
 import "./globals.css";
-// import { verifyAuth } from "@/lib/auth";
 import { getUser } from "@/lib/actions";
 import { redirect } from "next/navigation";
-// import UserProvider from "@/context/user-context";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -27,13 +25,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const loggedUser = await getUser();
-  // console.log("[LOGGED USER]", loggedUser);
   if (!loggedUser) redirect("/auth/login");
   return (
     <html lang="en">
       <body className={kanit.className}>
         <Provider>
-          {/* <UserProvider> */}
           <div className="grid grid-cols-[20rem,1fr] grid-rows-[auto,1fr] h-screen bg-zinc-800">
             <Header user={loggedUser} />
             <Sidebar user={loggedUser} />
@@ -41,7 +37,6 @@ export default async function RootLayout({
               {children}
             </main>
           </div>
-          {/* </UserProvider> */}
         </Provider>
       </body>
     </html>

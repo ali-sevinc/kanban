@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import InputGroup from "./InputGroup";
 import Button from "./Button";
 import { addTodo } from "@/lib/actions";
-import { BoardType, ProgressType, TaskType } from "@/lib/types";
+import { BoardType, ProgressType } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type PropsType = {
@@ -38,8 +38,6 @@ export default function NewTodo({ board, onClose }: PropsType) {
       body,
       board_id: board.id,
     };
-
-    // console.log(data);
 
     mutate(data);
 

@@ -41,6 +41,11 @@ export async function getBoardSupabase() {
 
 export async function deleteBoardSupabase(id: number) {
   try {
+    const { error: taskDelete } = await supabase
+      .from("tasks")
+      .delete()
+      .eq("board_id", id);
+    if (taskDelete) throw new Error("Something went wrong.");
     let { error } = await supabase.from("boards").delete().eq("id", id);
     if (error) throw new Error("Board could not fetched");
   } catch (error) {}

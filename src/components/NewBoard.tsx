@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import slugify from "slugify";
 
-import { BoardType, UserType, UserVerifyType } from "@/lib/types";
+import { BoardType, UserType } from "@/lib/types";
 import { createBoard } from "@/lib/actions";
 
 import TextButton from "./TextButton";

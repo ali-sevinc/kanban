@@ -1,7 +1,5 @@
 import Home from "@/components/Home";
 import { createClient } from "@/utils/supabase/server";
-// import { verifyAuth } from "@/lib/auth";
-// import supabase from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
 export default async function page() {

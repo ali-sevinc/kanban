@@ -92,10 +92,15 @@ export default function BoardItems({
                           })
                         }
                       >
-                        <HiArchive />
+                        <p className="flex items-center gap-1 justify-between w-full">
+                          <span>Archive</span> <HiArchive />
+                        </p>
                       </MenuProvider.Item>
                       <MenuProvider.Item onClick={() => onDelete(item.id)}>
-                        <HiTrash />
+                        <p className="flex items-center gap-1 justify-between w-full">
+                          <span>Delete</span>
+                          <HiTrash />
+                        </p>
                       </MenuProvider.Item>
                     </MenuProvider.List>
                   </MenuProvider>
@@ -112,11 +117,6 @@ export default function BoardItems({
           No task found.
         </p>
       )}
-      {/* {isLoading && (
-        <p className="text-center text-xl font-semibold animate-pulse">
-          Loading...
-        </p>
-      )} */}
     </li>
   );
 }

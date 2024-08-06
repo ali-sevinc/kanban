@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useState } from "react";
 
 import { BoardType, ProgressType, TaskType } from "@/lib/types";
 
@@ -15,9 +15,6 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "@supabase/supabase-js";
 
-// import { useUserContext } from "@/context/user-context";
-// import { redirect } from "next/navigation";
-
 type PropsType = { slug: string; user: User | null };
 
 export default function Board({ slug, user }: PropsType) {
@@ -25,8 +22,6 @@ export default function Board({ slug, user }: PropsType) {
 
   const [isChanging, setIsChanging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // const { user, handleLogin } = useUserContext();
 
   const queryCliet = useQueryClient();
 

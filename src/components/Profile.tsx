@@ -6,7 +6,6 @@ import { AnimatePresence } from "framer-motion";
 import { useFormState, useFormStatus } from "react-dom";
 import Button from "./Button";
 import { UserType } from "@/lib/types";
-// import { useUserContext } from "@/context/user-context";
 
 type PropsType = {
   updateImage: (
@@ -58,9 +57,6 @@ export default function Profile({
   const [imageState, imageAction] = useFormState(handleImage, {});
   const [nameState, nameAction] = useFormState(handleName, {});
   const [passwordState, passwordAction] = useFormState(handlePassword, {});
-  // console.log("Image State", imageState);
-  // console.log("Name State", nameState);
-  // console.log("Password State", passwordState);
 
   return (
     <>
@@ -103,15 +99,7 @@ export default function Profile({
                   accept="image/png, image/jpeg"
                 />
               </div>
-              {/* <div className="flex items-center justify-center gap-8 pt-4 pb-2 text-zinc-50">
-                <Button
-                  model="secondary"
-                  onClick={() => setShowImageForm(false)}
-                >
-                  Close
-                </Button>
-                <Button type="submit">Submit</Button>
-              </div> */}
+
               <FormButton onClose={() => setShowImageForm(false)} />
               {imageState.error && (
                 <p className="text-center text-sm text-red-400">
@@ -140,15 +128,7 @@ export default function Profile({
                   className="px-2 py-1 rounded"
                 />
               </div>
-              {/* <div className="flex pt-4 pb-2 items-center justify-center gap-8 text-zinc-50">
-                <Button
-                  model="secondary"
-                  onClick={() => setShowNameForm(false)}
-                >
-                  Close
-                </Button>
-                <Button type="submit">Submit</Button>
-              </div> */}
+
               <FormButton onClose={() => setShowNameForm(false)} />
               {nameState.error && (
                 <p className="text-center text-sm text-red-400">
@@ -191,15 +171,7 @@ export default function Profile({
                   className="px-2 py-1 rounded"
                 />
               </div>
-              {/* <div className="flex pt-4 pb-2 items-center justify-center gap-8 text-zinc-50">
-                <Button
-                  model="secondary"
-                  onClick={() => setShowPasswordForm(false)}
-                >
-                  Close
-                </Button>
-                <Button type="submit">Submit</Button>
-              </div> */}
+
               <FormButton onClose={() => setShowPasswordForm(false)} />
               {passwordState.currentError && (
                 <p className="text-center text-sm text-red-400">

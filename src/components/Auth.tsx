@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-// import { redirect } from "next/navigation";
 
 import Button from "./Button";
 import { useFormState, useFormStatus } from "react-dom";
@@ -20,18 +19,6 @@ export default function Auth({
   loggedUser: User | null;
 }) {
   const [state, formAction] = useFormState(authAction, {} as AuthFormState);
-  // const { user, handleLogin } = useUserContext();
-
-  // console.log(user);
-
-  // const { data } = useQuery({
-  //   queryKey: ["user"],
-  //   queryFn: async () => {
-  //     const user = await getUser();
-  //     // handleLogin(user);
-  //     return user;
-  //   },
-  // });
 
   return (
     <form

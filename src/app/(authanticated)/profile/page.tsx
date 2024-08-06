@@ -5,11 +5,8 @@ import {
   updateNameById,
   updatePasswordById,
 } from "@/lib/actions";
-// import { verifyAuth } from "@/lib/auth";
 import { uploadImage } from "@/lib/cloudinary";
-import { verifyPassword } from "@/lib/hash";
 import { createClient } from "@/utils/supabase/server";
-// import supabase from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {

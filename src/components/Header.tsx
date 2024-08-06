@@ -33,8 +33,6 @@ export default function Header({ user }: { user: UserType | undefined }) {
 
   const board = boards?.find((board) => board.slug === pathName.slice(1));
 
-  // console.log(board);
-
   let displayName = "";
   if (pathName === "/boards") displayName = `Welcome ${user?.name}` || "Home";
   if (pathName !== "/boards")
